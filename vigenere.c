@@ -66,14 +66,20 @@ int main(int argc, char *argv[]) {
     }
     
     fclose(input_file);
+
+    char * text = malloc(bytes_read + 1);
+    
+    int purged = normalize_AZ(buffer, bytes_read, text);
+    bytes_read = bytes_read - purged;
+
     char *buffer2 = malloc(bytes_read + 1);
 
     if (cipher) {
         /*Cipher*/
-        vigenere_cipher(buffer, buffer2, bytes_read, key);
+        vigenere_cipher(text, buffer2, bytes_read, key);
     } else {
         /*Decipher*/
-        vigenere_decipher(buffer, buffer2, bytes_read, key);
+        vigenere_decipher(text, buffer2, bytes_read, key);
     }
 
     /*Open the output file for writing*/

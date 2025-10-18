@@ -8,7 +8,7 @@
 
 #define MAX_TEXT 10000000
 #define MAX_NGRAM 10
-#define MAX_DIV 300
+#define MAX_DIV 400
 #define MAX_GCD 1000
 
 int main(int argc, char *argv[]) {
@@ -161,7 +161,42 @@ int main(int argc, char *argv[]) {
             fprintf(output_file, "%3d -> %d\n", g, gcd_freq[g]);
     }
 
-    
+    /* Try to deduce key length by "divisor-lifting" */
+    int div_votes[MAX_DIV] = {0};
+
+    /* Total number of GCD events */
+    int total_events = 0;
+    for (int g = 2; g < MAX_DIV; g++) {
+        total_events += gcd_freq[g];
+    }
+
+    /* For each GCD found, increment votes for its divisors */
+    for (int g = 2; g < MAX_DIV; g++) {
+        int f = gcd_freq[g];
+        if (f == 0) continue;
+        for (int k = 3; k <= g && k < MAX_DIV && k >= ngram; k++) {
+            if (g % k == 0) {
+                div_votes[k] += f;
+            }
+        }
+    }
+
+    fprintf(output_file, "\n===== Divisor-lift votes  =====\n");
+    int best_k = 0, best_votes = 0;
+    for (int k = 2; k < MAX_DIV; k++) {
+        if (div_votes[k] > 0) {
+            double pct = 100.0 * div_votes[k] / (double) total_events;
+            fprintf(output_file, "%3d -> %d (%.2f%%)\n", k, div_votes[k], pct);
+            /* Find best k  if there is a tie, choose smaller k */
+            if (div_votes[k] > best_votes || (div_votes[k] == best_votes && k < best_k)) {
+                best_k = k;
+                best_votes = div_votes[k];
+            }
+        }
+    }
+
+
+    fprintf(output_file, "\nProbable key length: %d\n", best_k); 
 
     fclose(output_file);
     free(buffer);

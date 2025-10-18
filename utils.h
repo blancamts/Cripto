@@ -6,6 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <gmp.h>
+#include <ctype.h>
+#include "lfsr.h"
 
 void euclides(mpz_t a , mpz_t b, mpz_t res);
 int is_coprime(mpz_t a, mpz_t b);
@@ -21,8 +23,12 @@ void inverse_matrix(mpz_t **matrix, mpz_t **inv_matrix, int n, mpz_t mod);
 void affine_decipher_hill(const char *input, char *output, size_t length, mpz_t **A, mpz_t *b, int n, mpz_t mod);
 void vigenere_cipher(const char *input, char *output, size_t length, const char *key);
 void vigenere_decipher(const char *input, char *output, size_t length, const char *key);
-int normalize_AZ(char *buffer, size_t length);
+int normalize_AZ(char *buffer, size_t length, char *text);
 double calculate_ic(const char *buffer, size_t length, int n);
 int gcd_aux(int a, int b);
+int shrinking_bit(LFSR *r1, LFSR *r2);
+void stream_cipher(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2);
+void stream_cipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod);
+void stream_decipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod);
 
 #endif /*UTILS_H*/

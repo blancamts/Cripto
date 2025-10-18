@@ -437,29 +437,17 @@ void vigenere_decipher(const char *input, char *output, size_t length, const cha
 }
 
 /* Returns number of characters purged from buffer */
-int normalize_AZ(char *buffer, size_t length) {
-
+int normalize_AZ(char *buffer, size_t length, char *text) {
+    size_t k = 0;
     int purged = 0;
-    int new_len = 0;
-    char *temp = malloc(length + 1);
 
-    if (temp == NULL) {
-        perror("Failed to allocate memory for normalization");
-        exit(EXIT_FAILURE);
-    }
-
-    for (size_t i = 0; i < length; i++) {
-        if (buffer[i] >= 'A' && buffer[i] <= 'Z') {
-            temp[new_len] = buffer[i];
-            new_len++;
+    for (size_t i = 0; buffer[i] != '\0'; i++) {
+        if (isalpha((unsigned char)buffer[i])) {
+            text[k++] = toupper((unsigned char)buffer[i]);
         }else{
             purged++;
         }
     }
-
-    temp[new_len] = '\0';
-    memcpy(buffer, temp, new_len + 1);
-    free(temp);
 
     return purged;
 }
@@ -498,11 +486,6 @@ double calculate_ic(const char *buffer, size_t length, int n) {
         }
     }
 
-    /*DEBUG: Print cols*/
-    for (i = 0; i < n; i++) {
-        printf("Column %d: %s\n", i, cols[i]);
-    }
-
     for (i = 0; i < n; i++){
         size_t col_length = strlen(cols[i]);
         double ic_col = 0.0;
@@ -511,7 +494,6 @@ double calculate_ic(const char *buffer, size_t length, int n) {
         }
         ic_col /= (col_length * (col_length - 1));
         ic_total += ic_col;
-        printf("IC for column %d: %f\n", i, ic_col);
     }
 
     for (i = 0; i < n; i++) {
@@ -530,6 +512,94 @@ int gcd_aux(int a, int b) {
     }
     return a;
 }
+
+
+int shrinking_bit(LFSR *r1, LFSR *r2){
+
+    int bit;
+    /* Generate bits until control bit is 1 */
+    while (1) {
+        int control = lfsr_next_bit(r1);
+        int candidate = lfsr_next_bit(r2);
+        if (control == 1) {
+            bit = candidate;
+            break;
+        }
+    }
+    return bit;
+}
+
+void stream_cipher(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2) {
+
+    /*Use byte because we take 8 bits at a time to XOR with each byte of input*/
+    for (size_t i = 0; i < length; i++) {
+        uint8_t key_byte = 0;
+
+        /* Generate 8 bits for the key byte */
+        for (int bit = 0; bit < 8; bit++) {
+            key_byte |= (shrinking_next_bit(r1, r2) << bit);
+        }
+
+        /* XOR*/
+        output[i] = input[i] ^ key_byte;
+    }
+
+    output[length] = '\0';
+}
+
+
+void stream_cipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod) {
+
+    for (size_t i = 0; i < length; i++) {
+
+        char c = input[i];
+        /*Transform letter to number 0–25*/
+        int x = c - 'A';  
+        int key = 0;
+
+        /* Generate 5 bits for z */
+        for (int bit = 0; bit < 5; bit++) { 
+            key |= (shrinking_next_bit(r1, r2) << bit);
+        }
+
+        /* Ensure key is within mod */
+        key %= mod;
+        
+        int y;
+        y = (x + key) % mod;
+        output[i] = 'A' + y;
+    }
+
+    output[length] = '\0';
+}
+
+void stream_decipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod) {
+
+    for (size_t i = 0; i < length; i++) {
+
+        char c = input[i];
+        /*Transform letter to number 0–25*/
+        int y = c - 'A';  
+        int key = 0;
+
+        /* Generate 5 bits for z */
+        for (int bit = 0; bit < 5; bit++) { 
+            key |= (shrinking_next_bit(r1, r2) << bit);
+        }
+
+        /* Ensure key is within mod */
+        key %= mod;
+        
+        int x;
+        x = (y - key + mod) % mod;
+        output[i] = 'A' + x;
+    }
+
+    output[length] = '\0';
+}
+
+
+
 
 
 
