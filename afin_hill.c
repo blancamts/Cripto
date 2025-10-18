@@ -14,7 +14,8 @@ int main(int argc, char *argv[]) {
     int *a_raw = NULL, *b_raw = NULL; /* coefficients for affine cipher, NULL for unset (error) */
     FILE *input_file, *output_file;
     int n = -1; /* dimension of the matrix, -1 for unset (error) */
-    int padding_arg = 0; /* 0 for no padding, 1 for padding */
+    int padding = 0;
+    char *original_buffer;
 
     int i, j;
 
@@ -22,7 +23,7 @@ int main(int argc, char *argv[]) {
     mpz_inits(A, mod, NULL);
 
     /* Parse command line arguments */
-    while ((opt = getopt(argc, argv, "CDn:m:a:b:i:o:p:")) != -1) {
+    while ((opt = getopt(argc, argv, "CDn:m:a:b:i:o:")) != -1) {
         switch (opt) {
             case 'C':
                 cipher = 1;
@@ -79,10 +80,6 @@ int main(int argc, char *argv[]) {
             case 'o':
                 output_filename = optarg;
                 break;
-            
-            case 'p':
-                padding_arg = atoi(optarg);
-                break;
 
             default:
                 fprintf(stderr, "Usage: %s -C|-D -n n -m mod -a a -b b -i inputfile -o outputfile\n", argv[0]);
@@ -98,23 +95,6 @@ int main(int argc, char *argv[]) {
     }if (mod_raw <= 0) {
         fprintf(stderr, "Error: Mod must be a positive integer\n");
         return EXIT_FAILURE;
-    }if (padding_arg < 0 || padding_arg > 2) {
-        fprintf(stderr, "Error: Padding argument must be between 0 and 2\n");
-        return EXIT_FAILURE;
-    }
-
-    /*DEBUG*/
-    printf("DEBUG(99): n=%d, mod=%d\n", n, mod_raw);
-    printf("DEBUG(100): Matrix a:\n");
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
-            printf("%d ", a_raw[i * n + j]);
-        }
-        printf("\n");
-    }
-    printf("DEBUG(107): Vector b:\n");
-    for (i = 0; i < n; i++) {
-        printf("%d\n", b_raw[i]);
     }
 
     /* Convert mod to mpz_t */
@@ -166,31 +146,50 @@ int main(int argc, char *argv[]) {
     
     fclose(input_file);
 
-    /*Pad the buffer to be a multiple of n*/
-    if (bytes_read % n != 0) {
-        size_t new_size = bytes_read + (n - (bytes_read % n));
-        buffer = realloc(buffer, new_size);
-        if (buffer == NULL) {
-            perror("Error reallocating memory");
-            fclose(input_file);
-            return EXIT_FAILURE;
+    original_buffer = buffer; /* Keep pointer to free later */
+    if (!cipher){
+        /*Deciphering, read padding from header*/
+        padding = buffer[0] - 'A';
+        buffer++;
+        bytes_read--;
+    }else if (cipher) {
+        padding = (n - (bytes_read % n)) % n;
+        /*Pad the buffer to be a multiple of n*/
+        if (bytes_read % n != 0) {
+            size_t new_size = bytes_read + padding;
+            buffer = realloc(buffer, new_size + 1);
+            if (buffer == NULL) {
+                perror("Error reallocating memory");
+                fclose(input_file);
+                return EXIT_FAILURE;
+            }
+            char padding_char = 'A' + (padding);
+            memset(buffer + bytes_read, padding_char, padding);
+            bytes_read = new_size;
+            buffer[bytes_read] = '\0';
         }
-        char padding_char = 'A' + (n - (bytes_read % n));
-        printf("DEBUG(157): Padding with %c\n", padding_char);
-        memset(buffer + bytes_read, padding_char, new_size - bytes_read);
-        bytes_read = new_size;
-        printf("DEBUG(160): New array after padding: %s\n", buffer);
     }
 
     char *buffer2 = malloc(bytes_read + 1);
 
     if (cipher) {
         /*Cipher*/
-        
         affine_cipher_hill(buffer, buffer2, bytes_read, matrix, vector, n, mod);
+
+        size_t len = strlen(buffer2);
+        buffer2 = realloc(buffer2, len + 2); /* +1 para header, +1 para '\0' */
+        if (!buffer) {
+            perror("Error reallocating memory for output buffer");
+            return 1;
+        }
+
+        memmove(buffer2 + 1, buffer2, len + 1);
+        buffer2[0] = 'A' + (padding);
+        bytes_read = len + 1;
     }else{
         /*Decipher*/
         affine_decipher_hill(buffer, buffer2, bytes_read, matrix, vector, n, mod);
+        bytes_read -= padding;
     }
 
     /*Open output file*/
@@ -204,17 +203,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    /*Write the ciphered data to the output file*/
-    int bytes_written;
-    if (!cipher){
-        /*Remove padding for deciphered text*/
-        bytes_written = bytes_read - padding_arg;
-    }else{
-        bytes_written = bytes_read;
-    }
-    fwrite(buffer2, sizeof(char), bytes_written, output_file);
+
+    fwrite(buffer2, sizeof(char), bytes_read, output_file);
+    
     fclose(output_file);
-    free(buffer);
+    free(original_buffer);
     free(buffer2);
 
     /*free mpz*/

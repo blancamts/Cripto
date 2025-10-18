@@ -1,0 +1,25 @@
+====== KASISKI TEST =====
+n-gram length: 3
+
+CHR -> GCD: 5 (positions: 0 165 235 275 285)
+XXW -> GCD: 35 (positions: 18 53)
+XWT -> GCD: 55 (positions: 19 74)
+LXF -> GCD: 109 (positions: 84 193)
+EMN -> GCD: 125 (positions: 93 218)
+MND -> GCD: 125 (positions: 94 219)
+ELX -> GCD: 5 (positions: 118 123)
+CHR -> GCD: 10 (positions: 165 235 275 285)
+GLX -> GCD: 30 (positions: 192 222)
+REM -> GCD: 49 (positions: 217 266)
+CHR -> GCD: 10 (positions: 235 275 285)
+CHR -> GCD: 10 (positions: 275 285)
+
+===== GCD frequencies =====
+  5 -> 2
+ 10 -> 3
+ 30 -> 1
+ 35 -> 1
+ 49 -> 1
+ 55 -> 1
+109 -> 1
+125 -> 2

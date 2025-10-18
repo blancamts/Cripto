@@ -398,8 +398,138 @@ void affine_decipher_hill(const char *input, char *output, size_t length, mpz_t 
     free(A_inv);
 }
 
+void vigenere_cipher(const char *input, char *output, size_t length, const char *key){
 
+    size_t key_l = strlen(key);
+    char c, k;
+    int c_ciphered;
 
+    for (size_t i = 0; i < length; i++) {
+        c = input[i];
+        if (c >= 'A' && c <= 'Z') {
+            k = key[i % key_l];
+            c_ciphered = ((c - 'A') + (k - 'A')) % 26;
+            output[i] = (char)(c_ciphered + 'A');
+        } else {
+            output[i] = c;
+        }
+    }
+    output[length] = '\0';
+}
+
+void vigenere_decipher(const char *input, char *output, size_t length, const char *key){
+
+    size_t key_l = strlen(key);
+    char c, k;
+    int c_deciphered;
+
+    for (size_t i = 0; i < length; i++) {
+        c = input[i];
+        if (c >= 'A' && c <= 'Z') {
+            k = key[i % key_l];
+            c_deciphered = ((c - 'A') - (k - 'A') + 26) % 26;
+            output[i] = (char)(c_deciphered + 'A');
+        } else {
+            output[i] = c;
+        }
+    }
+    output[length] = '\0';
+}
+
+/* Returns number of characters purged from buffer */
+int normalize_AZ(char *buffer, size_t length) {
+
+    int purged = 0;
+    int new_len = 0;
+    char *temp = malloc(length + 1);
+
+    if (temp == NULL) {
+        perror("Failed to allocate memory for normalization");
+        exit(EXIT_FAILURE);
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        if (buffer[i] >= 'A' && buffer[i] <= 'Z') {
+            temp[new_len] = buffer[i];
+            new_len++;
+        }else{
+            purged++;
+        }
+    }
+
+    temp[new_len] = '\0';
+    memcpy(buffer, temp, new_len + 1);
+    free(temp);
+
+    return purged;
+}
+
+double calculate_ic(const char *buffer, size_t length, int n) {
+    char **cols;
+    int i, j, col_index;
+    double ic_total = 0.0;
+    int freq[n][26];
+
+    cols = malloc(n * sizeof(char *));
+    for (int i = 0; i < n; i++) {
+        cols[i] = malloc((((length + n - 1) / n ) + 1) * sizeof(char)); /* ceil(lentgh/n) */
+    }
+
+    /*Initialize frequency array*/
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < 26; j++) {
+            freq[i][j] = 0;
+        }
+    }
+
+    for (i = 0, col_index = 0; i < length; i++) {
+        cols[i%n][col_index] = buffer[i];
+        freq[i%n][buffer[i] - 'A']++;
+        if ((i+1) % n == 0) {
+            col_index++;
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        if (i < length % n) {
+            cols[i][col_index] = '\0';
+        } else {
+            cols[i][col_index - 1] = '\0';
+        }
+    }
+
+    /*DEBUG: Print cols*/
+    for (i = 0; i < n; i++) {
+        printf("Column %d: %s\n", i, cols[i]);
+    }
+
+    for (i = 0; i < n; i++){
+        size_t col_length = strlen(cols[i]);
+        double ic_col = 0.0;
+        for (j = 0; j < 26; j++) { /*For each letter A-Z (26 letters)*/
+            ic_col += freq[i][j] * (freq[i][j] - 1);
+        }
+        ic_col /= (col_length * (col_length - 1));
+        ic_total += ic_col;
+        printf("IC for column %d: %f\n", i, ic_col);
+    }
+
+    for (i = 0; i < n; i++) {
+        free(cols[i]);
+    }
+    free(cols);
+
+    return ic_total / n;
+}
+
+int gcd_aux(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
 
 
 
