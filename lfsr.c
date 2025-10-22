@@ -12,6 +12,7 @@ int lfsr_next_bit(LFSR *l){
     int feedback = 0;
 
     output = l->state & 1;
+    
     x = l->state & l->mask;
 
     while (x){
@@ -23,3 +24,4 @@ int lfsr_next_bit(LFSR *l){
 
     return output;
 }
+

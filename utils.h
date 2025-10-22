@@ -27,8 +27,8 @@ int normalize_AZ(char *buffer, size_t length, char *text);
 double calculate_ic(const char *buffer, size_t length, int n);
 int gcd_aux(int a, int b);
 int shrinking_bit(LFSR *r1, LFSR *r2);
-void stream_cipher(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2);
-void stream_cipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod);
-void stream_decipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod);
+void stream_cipher(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2);
+void stream_cipher_mod(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2, int mod);
+void stream_decipher_mod(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2, int mod);
 
 #endif /*UTILS_H*/

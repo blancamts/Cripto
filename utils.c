@@ -524,7 +524,11 @@ int shrinking_bit(LFSR *r1, LFSR *r2){
     return bit;
 }
 
-void stream_cipher(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2) {
+void stream_cipher(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2) {
+
+    LFSR r1, r2;
+    lfsr_init(&r1, seed1, 0x00400006u, 32);
+    lfsr_init(&r2, seed2, 0xA3000000, 32);
 
     /*Use byte because we take 8 bits at a time to XOR with each byte of input*/
     for (size_t i = 0; i < length; i++) {
@@ -532,18 +536,23 @@ void stream_cipher(const char *input, char *output, size_t length, LFSR *r1, LFS
 
         /* Generate 8 bits for the key byte */
         for (int bit = 0; bit < 8; bit++) {
-            key_byte |= (shrinking_bit(r1, r2) << bit);
+            key_byte |= (shrinking_bit(&r1, &r2) << bit);
         }
+
 
         /* XOR*/
         output[i] = input[i] ^ key_byte;
     }
 
-    output[length] = '\0';
 }
 
 
-void stream_cipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod) {
+void stream_cipher_mod(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2, int mod) {
+
+
+    LFSR r1, r2;
+    lfsr_init(&r1, seed1, 0x00400006u, 32);
+    lfsr_init(&r2, seed2, 0xA3000000, 32);
 
     for (size_t i = 0; i < length; i++) {
 
@@ -553,12 +562,12 @@ void stream_cipher_mod(const char *input, char *output, size_t length, LFSR *r1,
         int key = 0;
 
         /* Generate 5 bits for z */
-        for (int bit = 0; bit < 5; bit++) { 
-            key |= (shrinking_bit(r1, r2) << bit);
+        for (int bit = 0; bit < 5; bit++) {
+            key = (key << 1) | shrinking_bit(&r1, &r2);
         }
-
         /* Ensure key is within mod */
         key %= mod;
+
         
         int y;
         y = (x + key) % mod;
@@ -568,7 +577,12 @@ void stream_cipher_mod(const char *input, char *output, size_t length, LFSR *r1,
     output[length] = '\0';
 }
 
-void stream_decipher_mod(const char *input, char *output, size_t length, LFSR *r1, LFSR *r2, int mod) {
+void stream_decipher_mod(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2, int mod) {
+
+    LFSR r1, r2;
+    lfsr_init(&r1, seed1, 0x00400006u, 32);
+    lfsr_init(&r2, seed2, 0xA3000000, 32);
+
 
     for (size_t i = 0; i < length; i++) {
 
@@ -578,12 +592,14 @@ void stream_decipher_mod(const char *input, char *output, size_t length, LFSR *r
         int key = 0;
 
         /* Generate 5 bits for z */
-        for (int bit = 0; bit < 5; bit++) { 
-            key |= (shrinking_bit(r1, r2) << bit);
+        for (int bit = 0; bit < 5; bit++) {
+            key = (key << 1) | shrinking_bit(&r1, &r2);
         }
+
 
         /* Ensure key is within mod */
         key %= mod;
+
         
         int x;
         x = (y - key + mod) % mod;
@@ -592,8 +608,21 @@ void stream_decipher_mod(const char *input, char *output, size_t length, LFSR *r
 
     output[length] = '\0';
 }
+/*
+void find_probable_key(const char *buffer, size_t length, int key_length, char *probable_key) {
+    char **cols;
+    int i, j, col_index;
+    double ic_total = 0.0;
+    int freq[n][26];
 
+    cols = malloc(n * sizeof(char *));
+    for (int i = 0; i < n; i++) {
+        cols[i] = malloc((((length + n - 1) / n ) + 1) * sizeof(char)); // ceil(lentgh/n) 
+    }
 
+    
+}
+*/
 
 
 

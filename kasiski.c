@@ -92,120 +92,63 @@ int main(int argc, char *argv[]) {
 
     int *distances = malloc(MAX_TEXT * sizeof(int));
     int len = strlen(text);
-    char **ngram_keys = malloc(MAX_GCD * sizeof(char *));
-    if (!ngram_keys) {
-        fprintf(stderr, "Error allocating memory for ngram_keys.\n");
-        return EXIT_FAILURE;
-    }
-    for (int i = 0; i < MAX_GCD; i++) {
-        ngram_keys[i] = calloc(MAX_NGRAM + 1, sizeof(char));
-        if (!ngram_keys[i]) {
-            fprintf(stderr, "Error allocating ngram_keys[%d].\n", i);
-            return EXIT_FAILURE;
-        }
-    }
 
 
-    int gcd_freq[MAX_DIV] = {0};
+    int flag = 0;
 
-    /* Analyze each n-gram found */
-    for (size_t i = 0; i < len - ngram; i++) {
+    for (size_t i = 0; i + ngram <= len && !flag; i++) {
+        /* Take n-gram starting at position i */
         char temp[MAX_NGRAM + 1];
         strncpy(temp, text + i, ngram);
         temp[ngram] = '\0';
 
-        /*Search for all occurrences of the n-gram */
-        size_t positions[1000];
+        /* Search for further occurrences */
+        size_t positions[2000];
         int count = 0;
+
+        /* Save first occurrence */
         positions[count++] = i;
 
-        /* Iterate through the rest of the text to find occurrences */
-        for (size_t j = i + ngram; j < len - ngram; j++) {
+        /* Look for further occurrences */
+        for (size_t j = i + 1; j + ngram <= len; j++) {
             if (strncmp(temp, text + j, ngram) == 0) {
                 positions[count++] = j;
             }
         }
 
-        /* If found at least 2 occurrences, calculate GCD of distances */
         if (count >= 2) {
-            /* Compute distances */
-            int dists[1000];
+            /* Calculate distances and their GCD */
+            int g = 0;
             for (int k = 1; k < count; k++) {
-                dists[k - 1] = positions[k] - positions[k - 1];
+                int dist = (int)(positions[k] - positions[k - 1]);
+                if (k == 1) g = dist;
+                else g = gcd_aux(g, dist);
             }
 
-            /*Compute GCD of distances*/
-            int g = dists[0];
-            for (int k = 1; k < count - 1; k++) {
-                g = gcd_aux(g, dists[k]);
-            }
-
-            if (g > 1 && g < MAX_DIV && g >= ngram) {
-                gcd_freq[g]++;
-                fprintf(output_file, "N-gram: %s.  GCD: %d (positions:", temp, g);
-                for (int k = 0; k < count; k++){
+            if (g > 1) {
+                /* Output results */
+                fprintf(output_file, "N-gram: %s\n", temp);
+                fprintf(output_file, "Occurrences (%d):", count);
+                for (int k = 0; k < count; k++) {
                     fprintf(output_file, " %zu", positions[k]);
                 }
-                fprintf(output_file, ")\n");
+                fprintf(output_file, "\n");
+                fprintf(output_file, "GCD of distances = %d -> possible key length\n\n", g);
+                flag = 1;
+                break;
             }
         }
     }
-
-    fprintf(output_file, "\n===== GCD frequencies =====\n");
-    for (int g = 2; g < MAX_DIV; g++) {
-        if (gcd_freq[g] > 0)
-            fprintf(output_file, "%3d -> %d\n", g, gcd_freq[g]);
-    }
-
-
-    /*
-    int div_votes[MAX_DIV] = {0};
-
-    int total_events = 0;
-    for (int g = 2; g < MAX_DIV; g++) {
-        total_events += gcd_freq[g];
-    }
-
-    for (int g = 2; g < MAX_DIV; g++) {
-        int f = gcd_freq[g];
-        if (f == 0) continue;
-        for (int k = 3; k <= g && k < MAX_DIV && k >= ngram; k++) {
-            if (g % k == 0) {
-                div_votes[k] += f;
-            }
-        }
-    }
-
-    fprintf(output_file, "\n===== Divisor-lift votes  =====\n");
-
-    int best_k = 0, best_votes = 0;
-
-    for (int k = 2; k < MAX_DIV; k++) {
-        if (div_votes[k] > 0) {
-
-            double pct = 100.0 * div_votes[k] / (double) total_events;
-            fprintf(output_file, "%3d -> %d (%.2f%%)\n", k, div_votes[k], pct);
-
-            if (div_votes[k] > best_votes || (div_votes[k] == best_votes && k < best_k)) {
-                best_k = k;
-                best_votes = div_votes[k];
-            }
-        }
-    }
-
-
-    fprintf(output_file, "\nProbable key length: %d\n", best_k);
     
-    */
+
+    if (!flag) {
+        fprintf(output_file, "No repeated n-grams found for any tested size (>=2 and <= %d).\n", ngram);
+    }
 
     fclose(output_file);
     free(buffer);
     free(text);
     free(distances);
-    for (int i = 0; i < MAX_GCD; i++) {
-        free(ngram_keys[i]);
-    }
-    free(ngram_keys);
     
 
     return EXIT_SUCCESS;
