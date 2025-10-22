@@ -252,12 +252,6 @@ void affine_cipher_hill(const char *input, char *output, size_t length, mpz_t **
             mpz_mod(y[j], y[j], mod);
         }
 
-
-        for (int j = 0; j < n; j++) {
-            gmp_printf("%Zd ", y[j]);
-        }
-        printf("\n");
-
         /* Write the output block */
         for (int j = 0; j < n; j++) {
             if (i + j < length) {

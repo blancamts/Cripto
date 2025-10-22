@@ -149,8 +149,8 @@ int main(int argc, char *argv[]) {
     original_buffer = buffer; /* Keep pointer to free later */
     if (!cipher){
         /*Deciphering, read padding from header*/
-        padding = buffer[0] - 'A';
-        buffer++;
+        padding = buffer[bytes_read - 1] - 'A';
+        buffer[bytes_read - 1] = '\0';
         bytes_read--;
     }else if (cipher) {
         padding = (n - (bytes_read % n)) % n;
@@ -160,7 +160,6 @@ int main(int argc, char *argv[]) {
             buffer = realloc(buffer, new_size + 1);
             if (buffer == NULL) {
                 perror("Error reallocating memory");
-                fclose(input_file);
                 return EXIT_FAILURE;
             }
             char padding_char = 'A' + (padding);
@@ -183,8 +182,8 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        memmove(buffer2 + 1, buffer2, len + 1);
-        buffer2[0] = 'A' + (padding);
+        buffer2[bytes_read] = 'A' + (padding);
+        buffer2[bytes_read + 1] = '\0';
         bytes_read = len + 1;
     }else{
         /*Decipher*/
@@ -202,7 +201,6 @@ int main(int argc, char *argv[]) {
             return EXIT_FAILURE;
         }
     }
-
 
     fwrite(buffer2, sizeof(char), bytes_read, output_file);
     
