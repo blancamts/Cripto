@@ -1,0 +1,259 @@
+====== KASISKI TEST =====
+n-gram length: 3
+
+N-gram: TIG.  GCD: 8 (positions: 0 632 1200 1272 1520)
+N-gram: GZM.  GCD: 128 (positions: 2 130)
+N-gram: MSJ.  GCD: 16 (positions: 4 500 1636)
+N-gram: SIW.  GCD: 116 (positions: 11 127)
+N-gram: SPH.  GCD: 8 (positions: 16 40 64 264 768)
+N-gram: PHW.  GCD: 8 (positions: 17 265 769)
+N-gram: PWJ.  GCD: 8 (positions: 25 409 465 1729)
+N-gram: WJL.  GCD: 8 (positions: 26 410 466 1730)
+N-gram: JLY.  GCD: 8 (positions: 27 411 467 2003)
+N-gram: LYN.  GCD: 8 (positions: 28 412 468 2004)
+N-gram: YNL.  GCD: 8 (positions: 29 213 245 413 469 621 805 869 925 1589)
+N-gram: BNO.  GCD: 8 (positions: 33 369 393 1537)
+N-gram: SPH.  GCD: 8 (positions: 40 64 264 768)
+N-gram: ZOE.  GCD: 8 (positions: 54 486 1070 1542 1998)
+N-gram: SPH.  GCD: 8 (positions: 64 264 768)
+N-gram: RPG.  GCD: 8 (positions: 70 774 1646)
+N-gram: PGI.  GCD: 8 (positions: 71 775 1647)
+N-gram: GIV.  GCD: 8 (positions: 72 776 1648)
+N-gram: AHF.  GCD: 8 (positions: 87 543 663 831 1335 1367 1599 1687)
+N-gram: UJH.  GCD: 8 (positions: 97 177 441 593 761 825 857 961 977 1481 1961)
+N-gram: KUT.  GCD: 384 (positions: 110 494)
+N-gram: BPG.  GCD: 8 (positions: 113 377 1953)
+N-gram: FYA.  GCD: 24 (positions: 117 405 1725)
+N-gram: ASF.  GCD: 304 (positions: 119 423)
+N-gram: NZE.  GCD: 380 (positions: 134 514)
+N-gram: ZED.  GCD: 380 (positions: 135 515)
+N-gram: VKI.  GCD: 8 (positions: 146 330 554 786 1082 1154 1242 1698 1714 1898)
+N-gram: JHW.  GCD: 117 (positions: 158 275)
+N-gram: UJH.  GCD: 8 (positions: 177 441 593 761 825 857 961 977 1481 1961)
+N-gram: JHV.  GCD: 8 (positions: 178 1474 1514 1706)
+N-gram: YNL.  GCD: 8 (positions: 213 245 413 469 621 805 869 925 1589)
+N-gram: NLW.  GCD: 368 (positions: 214 582)
+N-gram: XNL.  GCD: 8 (positions: 229 293 581 1917)
+N-gram: SYN.  GCD: 8 (positions: 244 620 1588)
+N-gram: YNL.  GCD: 8 (positions: 245 413 469 621 805 869 925 1589)
+N-gram: JNO.  GCD: 64 (positions: 249 569 1593)
+N-gram: XNL.  GCD: 8 (positions: 293 581 1917)
+N-gram: LNA.  GCD: 8 (positions: 317 669 1333 1693)
+N-gram: SIG.  GCD: 8 (positions: 320 1224 1576 1936)
+N-gram: VKI.  GCD: 8 (positions: 330 554 786 1082 1154 1242 1698 1714 1898)
+N-gram: NTN.  GCD: 8 (positions: 357 1453 1773)
+N-gram: BFP.  GCD: 8 (positions: 360 656 1168)
+N-gram: FPH.  GCD: 8 (positions: 361 657 1169)
+N-gram: PHE.  GCD: 8 (positions: 362 658 1170)
+N-gram: HEY.  GCD: 8 (positions: 363 659 1171)
+N-gram: EYN.  GCD: 8 (positions: 364 660 1172)
+N-gram: BNO.  GCD: 8 (positions: 369 393 1537)
+N-gram: NOI.  GCD: 8 (positions: 370 394 1538)
+N-gram: ISU.  GCD: 32 (positions: 372 1428 1876)
+N-gram: IIN.  GCD: 40 (positions: 396 436)
+N-gram: INL.  GCD: 40 (positions: 397 437)
+N-gram: NLR.  GCD: 4 (positions: 398 438 622 866 1194 1422)
+N-gram: CPI.  GCD: 8 (positions: 402 490 1426)
+N-gram: AHP.  GCD: 8 (positions: 407 463 1727)
+N-gram: HPW.  GCD: 8 (positions: 408 464 1728)
+N-gram: PWJ.  GCD: 8 (positions: 409 465 1729)
+N-gram: WJL.  GCD: 8 (positions: 410 466 1730)
+N-gram: JLY.  GCD: 8 (positions: 411 467 2003)
+N-gram: LYN.  GCD: 8 (positions: 412 468 2004)
+N-gram: YNL.  GCD: 8 (positions: 413 469 621 805 869 925 1589)
+N-gram: WYO.  GCD: 8 (positions: 420 532 604)
+N-gram: GUI.  GCD: 4 (positions: 434 1350 1578 1610 1794)
+N-gram: NLR.  GCD: 4 (positions: 438 622 866 1194 1422)
+N-gram: LRU.  GCD: 8 (positions: 439 623 975 1399)
+N-gram: RUJ.  GCD: 8 (positions: 440 624 824 856 976 1400)
+N-gram: UJH.  GCD: 8 (positions: 441 593 761 825 857 961 977 1481 1961)
+N-gram: GUW.  GCD: 8 (positions: 450 530 1754 1786)
+N-gram: CQK.  GCD: 80 (positions: 458 538)
+N-gram: QKJ.  GCD: 280 (positions: 459 739)
+N-gram: YNL.  GCD: 8 (positions: 469 621 805 869 925 1589)
+N-gram: NLI.  GCD: 336 (positions: 470 806)
+N-gram: LIS.  GCD: 336 (positions: 471 807)
+N-gram: ZOE.  GCD: 8 (positions: 486 1070 1542 1998)
+N-gram: TMG.  GCD: 80 (positions: 496 576)
+N-gram: XMK.  GCD: 8 (positions: 524 908 996)
+N-gram: GUW.  GCD: 8 (positions: 530 1754 1786)
+N-gram: WYO.  GCD: 72 (positions: 532 604)
+N-gram: YOS.  GCD: 72 (positions: 533 605)
+N-gram: OSL.  GCD: 72 (positions: 534 606)
+N-gram: SLT.  GCD: 175 (positions: 535 710)
+N-gram: AHF.  GCD: 8 (positions: 543 663 831 1335 1367 1599 1687)
+N-gram: SOU.  GCD: 336 (positions: 549 885)
+N-gram: OUG.  GCD: 336 (positions: 550 886)
+N-gram: UGT.  GCD: 336 (positions: 551 887)
+N-gram: VKI.  GCD: 8 (positions: 554 786 1082 1154 1242 1698 1714 1898)
+N-gram: IGU.  GCD: 4 (positions: 589 1385 1577 1785 1793)
+N-gram: UDU.  GCD: 168 (positions: 591 759)
+N-gram: DUJ.  GCD: 8 (positions: 592 760 960)
+N-gram: UJH.  GCD: 8 (positions: 593 761 825 857 961 977 1481 1961)
+N-gram: GMO.  GCD: 360 (positions: 596 956)
+N-gram: OSD.  GCD: 360 (positions: 598 958)
+N-gram: YNL.  GCD: 8 (positions: 621 805 869 925 1589)
+N-gram: NLR.  GCD: 4 (positions: 622 866 1194 1422)
+N-gram: LRU.  GCD: 8 (positions: 623 975 1399)
+N-gram: RUJ.  GCD: 8 (positions: 624 824 856 976 1400)
+N-gram: MOT.  GCD: 352 (positions: 630 982)
+N-gram: TIG.  GCD: 8 (positions: 632 1200 1272 1520)
+N-gram: JYA.  GCD: 8 (positions: 645 1013 1341)
+N-gram: AHF.  GCD: 8 (positions: 663 831 1335 1367 1599 1687)
+N-gram: LNA.  GCD: 8 (positions: 669 1333 1693)
+N-gram: CQH.  GCD: 8 (positions: 674 1506 1642)
+N-gram: MKD.  GCD: 228 (positions: 681 909)
+N-gram: UTE.  GCD: 16 (positions: 694 1478 1510)
+N-gram: KQK.  GCD: 8 (positions: 714 738 922)
+N-gram: FTH.  GCD: 80 (positions: 721 801)
+N-gram: GZI.  GCD: 56 (positions: 726 782)
+N-gram: KQK.  GCD: 184 (positions: 738 922)
+N-gram: JXL.  GCD: 8 (positions: 741 1629 1933)
+N-gram: DUJ.  GCD: 200 (positions: 760 960)
+N-gram: UJH.  GCD: 8 (positions: 761 825 857 961 977 1481 1961)
+N-gram: WLJ.  GCD: 8 (positions: 771 1011 1043 1667 1803)
+N-gram: IOV.  GCD: 120 (positions: 784 904)
+N-gram: VKI.  GCD: 8 (positions: 786 1082 1154 1242 1698 1714 1898)
+N-gram: HHY.  GCD: 8 (positions: 803 843 1555)
+N-gram: YNL.  GCD: 8 (positions: 805 869 925 1589)
+N-gram: RUJ.  GCD: 8 (positions: 824 856 976 1400)
+N-gram: UJH.  GCD: 8 (positions: 825 857 961 977 1481 1961)
+N-gram: JHA.  GCD: 64 (positions: 826 890)
+N-gram: HAF.  GCD: 64 (positions: 827 891)
+N-gram: EAH.  GCD: 192 (positions: 830 1022)
+N-gram: AHF.  GCD: 8 (positions: 831 1335 1367 1599 1687)
+N-gram: AOF.  GCD: 16 (positions: 848 1040 1232 1344)
+N-gram: RUJ.  GCD: 8 (positions: 856 976 1400)
+N-gram: UJH.  GCD: 8 (positions: 857 961 977 1481 1961)
+N-gram: SQJ.  GCD: 112 (positions: 860 972)
+N-gram: NLR.  GCD: 4 (positions: 866 1194 1422)
+N-gram: LRY.  GCD: 328 (positions: 867 1195)
+N-gram: YNL.  GCD: 8 (positions: 869 925 1589)
+N-gram: NLS.  GCD: 56 (positions: 870 926)
+N-gram: XMK.  GCD: 88 (positions: 908 996)
+N-gram: DXM.  GCD: 320 (positions: 939 1259)
+N-gram: YOE.  GCD: 296 (positions: 942 1238)
+N-gram: UJH.  GCD: 8 (positions: 961 977 1481 1961)
+N-gram: FSQ.  GCD: 117 (positions: 971 1088)
+N-gram: JLR.  GCD: 292 (positions: 974 1266)
+N-gram: UJH.  GCD: 24 (positions: 977 1481 1961)
+N-gram: ZTK.  GCD: 56 (positions: 1005 1061)
+N-gram: WLJ.  GCD: 8 (positions: 1011 1043 1667 1803)
+N-gram: JYA.  GCD: 328 (positions: 1013 1341)
+N-gram: LJX.  GCD: 8 (positions: 1028 1092 1668 1932)
+N-gram: AOF.  GCD: 16 (positions: 1040 1232 1344)
+N-gram: OFW.  GCD: 8 (positions: 1041 1665 1801)
+N-gram: FWL.  GCD: 8 (positions: 1042 1666 1802)
+N-gram: WLJ.  GCD: 8 (positions: 1043 1667 1803)
+N-gram: JCO.  GCD: 328 (positions: 1045 1373)
+N-gram: COI.  GCD: 328 (positions: 1046 1374)
+N-gram: OIT.  GCD: 328 (positions: 1047 1375)
+N-gram: TRH.  GCD: 328 (positions: 1049 1377)
+N-gram: RHV.  GCD: 328 (positions: 1050 1378)
+N-gram: ZOE.  GCD: 8 (positions: 1070 1542 1998)
+N-gram: VKI.  GCD: 8 (positions: 1082 1154 1242 1698 1714 1898)
+N-gram: LJX.  GCD: 24 (positions: 1092 1668 1932)
+N-gram: SJO.  GCD: 384 (positions: 1109 1493)
+N-gram: VKI.  GCD: 8 (positions: 1154 1242 1698 1714 1898)
+N-gram: NLR.  GCD: 228 (positions: 1194 1422)
+N-gram: TIG.  GCD: 8 (positions: 1200 1272 1520)
+N-gram: EQR.  GCD: 256 (positions: 1212 1468)
+N-gram: SIG.  GCD: 8 (positions: 1224 1576 1936)
+N-gram: IGN.  GCD: 48 (positions: 1225 1273)
+N-gram: AAO.  GCD: 112 (positions: 1231 1343)
+N-gram: AOF.  GCD: 112 (positions: 1232 1344)
+N-gram: VKI.  GCD: 8 (positions: 1242 1698 1714 1898)
+N-gram: TIG.  GCD: 248 (positions: 1272 1520)
+N-gram: ZHF.  GCD: 72 (positions: 1287 1359)
+N-gram: TEO.  GCD: 96 (positions: 1297 1393)
+N-gram: KAS.  GCD: 303 (positions: 1303 1606)
+N-gram: ITR.  GCD: 47 (positions: 1329 1376)
+N-gram: TRY.  GCD: 160 (positions: 1330 1490)
+N-gram: LNA.  GCD: 360 (positions: 1333 1693)
+N-gram: AHF.  GCD: 8 (positions: 1335 1367 1599 1687)
+N-gram: ISW.  GCD: 32 (positions: 1347 1411 2019)
+N-gram: GUI.  GCD: 4 (positions: 1350 1578 1610 1794)
+N-gram: AHF.  GCD: 8 (positions: 1367 1599 1687)
+N-gram: HFU.  GCD: 232 (positions: 1368 1600)
+N-gram: IGU.  GCD: 8 (positions: 1385 1577 1785 1793)
+N-gram: NTN.  GCD: 320 (positions: 1453 1773)
+N-gram: JHV.  GCD: 8 (positions: 1474 1514 1706)
+N-gram: UTE.  GCD: 32 (positions: 1478 1510)
+N-gram: CQH.  GCD: 136 (positions: 1506 1642)
+N-gram: JHV.  GCD: 192 (positions: 1514 1706)
+N-gram: JOU.  GCD: 392 (positions: 1517 1909)
+N-gram: MXZ.  GCD: 128 (positions: 1524 1652)
+N-gram: UIX.  GCD: 64 (positions: 1547 1611)
+N-gram: OMF.  GCD: 296 (positions: 1560 1856)
+N-gram: SIG.  GCD: 360 (positions: 1576 1936)
+N-gram: IGU.  GCD: 8 (positions: 1577 1785 1793)
+N-gram: GUI.  GCD: 8 (positions: 1578 1610 1794)
+N-gram: KAH.  GCD: 248 (positions: 1598 1846)
+N-gram: AHF.  GCD: 88 (positions: 1599 1687)
+N-gram: GUI.  GCD: 184 (positions: 1610 1794)
+N-gram: KFO.  GCD: 172 (positions: 1626 1798)
+N-gram: JXL.  GCD: 304 (positions: 1629 1933)
+N-gram: DJP.  GCD: 176 (positions: 1632 1808)
+N-gram: VUO.  GCD: 320 (positions: 1663 1983)
+N-gram: OFW.  GCD: 136 (positions: 1665 1801)
+N-gram: FWL.  GCD: 136 (positions: 1666 1802)
+N-gram: WLJ.  GCD: 136 (positions: 1667 1803)
+N-gram: LJX.  GCD: 264 (positions: 1668 1932)
+N-gram: OGV.  GCD: 24 (positions: 1672 1696)
+N-gram: VKI.  GCD: 8 (positions: 1698 1714 1898)
+N-gram: FVK.  GCD: 32 (positions: 1713 1745)
+N-gram: VKI.  GCD: 184 (positions: 1714 1898)
+N-gram: GUW.  GCD: 32 (positions: 1754 1786)
+N-gram: IGU.  GCD: 8 (positions: 1785 1793)
+N-gram: NZD.  GCD: 48 (positions: 1821 1869)
+N-gram: ZDA.  GCD: 48 (positions: 1822 1870)
+N-gram: DAT.  GCD: 48 (positions: 1823 1871)
+
+===== GCD frequencies =====
+  4 -> 7
+  8 -> 99
+ 16 -> 4
+ 24 -> 4
+ 32 -> 5
+ 40 -> 2
+ 47 -> 1
+ 48 -> 4
+ 56 -> 3
+ 64 -> 4
+ 72 -> 4
+ 80 -> 3
+ 88 -> 2
+ 96 -> 1
+112 -> 3
+116 -> 1
+117 -> 2
+120 -> 1
+128 -> 2
+136 -> 4
+160 -> 1
+168 -> 1
+172 -> 1
+175 -> 1
+176 -> 1
+184 -> 3
+192 -> 2
+200 -> 1
+228 -> 2
+232 -> 1
+248 -> 2
+256 -> 1
+264 -> 1
+280 -> 1
+292 -> 1
+296 -> 2
+303 -> 1
+304 -> 2
+320 -> 3
+328 -> 7
+336 -> 5
+352 -> 1
+360 -> 4
+368 -> 1
+380 -> 2
+384 -> 2
+392 -> 1

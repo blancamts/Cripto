@@ -1,5 +1,5 @@
 #include "utils.h"
-
+#include "lfsr.h"
 void euclides(mpz_t a , mpz_t b, mpz_t res) {
 
     mpz_t r0, r1, r2, q;
@@ -415,6 +415,7 @@ void vigenere_cipher(const char *input, char *output, size_t length, const char 
         }
     }
     output[length] = '\0';
+
 }
 
 void vigenere_decipher(const char *input, char *output, size_t length, const char *key){
@@ -448,7 +449,7 @@ int normalize_AZ(char *buffer, size_t length, char *text) {
             purged++;
         }
     }
-
+    text[k] = '\0';
     return purged;
 }
 
@@ -537,7 +538,7 @@ void stream_cipher(const char *input, char *output, size_t length, LFSR *r1, LFS
 
         /* Generate 8 bits for the key byte */
         for (int bit = 0; bit < 8; bit++) {
-            key_byte |= (shrinking_next_bit(r1, r2) << bit);
+            key_byte |= (shrinking_bit(r1, r2) << bit);
         }
 
         /* XOR*/
@@ -559,7 +560,7 @@ void stream_cipher_mod(const char *input, char *output, size_t length, LFSR *r1,
 
         /* Generate 5 bits for z */
         for (int bit = 0; bit < 5; bit++) { 
-            key |= (shrinking_next_bit(r1, r2) << bit);
+            key |= (shrinking_bit(r1, r2) << bit);
         }
 
         /* Ensure key is within mod */
@@ -584,7 +585,7 @@ void stream_decipher_mod(const char *input, char *output, size_t length, LFSR *r
 
         /* Generate 5 bits for z */
         for (int bit = 0; bit < 5; bit++) { 
-            key |= (shrinking_next_bit(r1, r2) << bit);
+            key |= (shrinking_bit(r1, r2) << bit);
         }
 
         /* Ensure key is within mod */

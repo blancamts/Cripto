@@ -65,7 +65,6 @@ int main(int argc, char *argv[]) {
     buffer[bytes_read] = '\0';
     fclose(input_file);
 
-    size_t k = 0;
     char *text = malloc(bytes_read + 1);
     if (!text) {
         free(buffer);
@@ -73,14 +72,8 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-     /* Normalize input to uppercase A-Z */
-    for (size_t i = 0; buffer[i] != '\0'; i++) {
-        if (isalpha((unsigned char)buffer[i])) {
-            text[k++] = toupper((unsigned char)buffer[i]);
-        }
-    }
-
-    text[k] = '\0';
+    /* Normalize input to uppercase A-Z */
+    normalize_AZ(buffer, bytes_read, text);
 
     /* Open output file */
     if (output_filename == NULL) {
@@ -126,6 +119,7 @@ int main(int argc, char *argv[]) {
         int count = 0;
         positions[count++] = i;
 
+        /* Iterate through the rest of the text to find occurrences */
         for (size_t j = i + ngram; j < len - ngram; j++) {
             if (strncmp(temp, text + j, ngram) == 0) {
                 positions[count++] = j;
@@ -146,10 +140,12 @@ int main(int argc, char *argv[]) {
                 g = gcd_aux(g, dists[k]);
             }
 
-            if (g > 1 && g < MAX_DIV) {
+            if (g > 1 && g < MAX_DIV && g >= ngram) {
                 gcd_freq[g]++;
-                fprintf(output_file, "%s -> GCD: %d (positions:", temp, g);
-                for (int k = 0; k < count; k++) fprintf(output_file, " %zu", positions[k]);
+                fprintf(output_file, "N-gram: %s.  GCD: %d (positions:", temp, g);
+                for (int k = 0; k < count; k++){
+                    fprintf(output_file, " %zu", positions[k]);
+                }
                 fprintf(output_file, ")\n");
             }
         }
@@ -161,16 +157,15 @@ int main(int argc, char *argv[]) {
             fprintf(output_file, "%3d -> %d\n", g, gcd_freq[g]);
     }
 
-    /* Try to deduce key length by "divisor-lifting" */
+
+    /*
     int div_votes[MAX_DIV] = {0};
 
-    /* Total number of GCD events */
     int total_events = 0;
     for (int g = 2; g < MAX_DIV; g++) {
         total_events += gcd_freq[g];
     }
 
-    /* For each GCD found, increment votes for its divisors */
     for (int g = 2; g < MAX_DIV; g++) {
         int f = gcd_freq[g];
         if (f == 0) continue;
@@ -182,12 +177,15 @@ int main(int argc, char *argv[]) {
     }
 
     fprintf(output_file, "\n===== Divisor-lift votes  =====\n");
+
     int best_k = 0, best_votes = 0;
+
     for (int k = 2; k < MAX_DIV; k++) {
         if (div_votes[k] > 0) {
+
             double pct = 100.0 * div_votes[k] / (double) total_events;
             fprintf(output_file, "%3d -> %d (%.2f%%)\n", k, div_votes[k], pct);
-            /* Find best k  if there is a tie, choose smaller k */
+
             if (div_votes[k] > best_votes || (div_votes[k] == best_votes && k < best_k)) {
                 best_k = k;
                 best_votes = div_votes[k];
@@ -196,7 +194,9 @@ int main(int argc, char *argv[]) {
     }
 
 
-    fprintf(output_file, "\nProbable key length: %d\n", best_k); 
+    fprintf(output_file, "\nProbable key length: %d\n", best_k);
+    
+    */
 
     fclose(output_file);
     free(buffer);

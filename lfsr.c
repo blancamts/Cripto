@@ -15,11 +15,11 @@ int lfsr_next_bit(LFSR *l){
     x = l->state & l->mask;
 
     while (x){
-        feedback ^= (x & 1)
+        feedback ^= (x & 1);
         x >>= 1;
     }
 
-    l->state = (l->state >> 1) | (uint32_t)feedback << (l->size - 1)
+    l->state = (l->state >> 1) | (uint32_t)feedback << (l->size - 1);
 
     return output;
 }

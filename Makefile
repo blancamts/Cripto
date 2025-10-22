@@ -10,11 +10,11 @@ TARGET_D = kasiski
 TARGET_E = IC
 
 # Fuentes
-SRC_A = afin.c utils.c
-SRC_B = afin_hill.c utils.c
-SRC_C = vigenere.c utils.c
-SRC_D = kasiski.c utils.c
-SRC_E = IC.c utils.c
+SRC_A = afin.c utils.c lfsr.c
+SRC_B = afin_hill.c utils.c lfsr.c
+SRC_C = vigenere.c utils.c lfsr.c
+SRC_D = kasiski.c utils.c lfsr.c
+SRC_E = IC.c utils.c lfsr.c
 
 # Regla principal
 all: $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E)
