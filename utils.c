@@ -625,12 +625,177 @@ void find_probable_key(const char *buffer, size_t length, int key_length, char *
 */
 
 
+int parse_permutation(const char *str, int *vec) {
+
+    char *str_copy = strdup(str);
+    if (!str_copy) return -1;
+
+    char *token = strtok(str_copy, ",");
+    int i = 0;
+
+    while (token != NULL) {
+        vec[i++] = atoi(token);
+        token = strtok(NULL, ",");
+    }
+
+    free(str_copy);
+    return i; 
+}
 
 
+void permutation_cipher(const char *input, char *output, const char *K1_str, const char *K2_str) {
+
+    int *K1, *K2;
+    K1 = malloc(100 * sizeof(int));
+    K2 = malloc(100 * sizeof(int));
+    char *padded_text = malloc(strlen(input) + 16);
 
 
+    int i, pad = 0;
+    int M = parse_permutation(K1_str, K1);
+    int N = parse_permutation(K2_str, K2);
+
+    int block_size = M * N;
+    int length = strlen(input);
+
+    
+    int res = length % block_size;
+    pad = block_size - res;
+
+    int padded_length = length + pad;
+
+    for (int k = 0; k < length; k++)
+        padded_text[k] = input[k];
 
 
+    for (int k = length; k < padded_length; k++)
+        padded_text[k] = 'X';
+
+    /* Terminamos con fin de cadena */
+    padded_text[padded_length] = '\0';
+
+    /* Actualizamos longitud total */
+    length = padded_length;
+
+
+    for (i = 0; i < length; i += block_size){
+
+        char block[M][N];
+        char temp[M][N];
+        char out[M][N];
+
+        /* Fill the block */
+        for (int m = 0; m < M; m++) {
+            for (int n = 0; n < N; n++) {
+                block[m][n] = padded_text[i + m * N + n];
+            }
+        }
+
+        /*Permute rows*/
+       for(int m1 = 0; m1 < M; m1++) {
+            for (int n1 = 0; n1 < N; n1++) {
+                temp[K1[m1]][n1] = block[m1][n1];
+            }
+        }
+
+        /*Permute columns*/
+        for (int n2 = 0; n2 < N; n2++) {
+            for (int m2 = 0; m2 < M; m2++) {
+                out[m2][K2[n2]] = temp[m2][n2];
+            }
+        }
+
+        /*Write output*/
+        for(int m = 0; m < M; m++) {
+            for (int n = 0; n < N; n++) {
+                output[i + m * N + n] = out[m][n];
+            }
+        }
+
+
+    }
+
+    output[length] = '\0';
+
+    free(K1);
+    free(K2);
+    free(padded_text);
+ 
+
+}
+
+void inverse_permutation(int *K, int *inv, int size) {
+    for (int i = 0; i < size; i++)
+        inv[K[i]] = i;
+}
+
+
+void permutation_decipher(const char *input, char *output, const char *K1_str, const char *K2_str) {
+
+    int *K1, *K2;
+    K1 = malloc(100 * sizeof(int));
+    K2 = malloc(100 * sizeof(int));
+
+
+    int i;
+
+    int M = parse_permutation(K1_str, K1);
+    int N = parse_permutation(K2_str, K2);
+
+    int *K1_inv = malloc(M * sizeof(int));
+    int *K2_inv = malloc(N * sizeof(int));
+
+    inverse_permutation(K1, K1_inv, M);
+    inverse_permutation(K2, K2_inv, N);
+
+    int block_size = M * N;
+    int length = strlen(input);
+
+    for (i = 0; i < length; i += block_size){
+
+        char block[M][N];
+        char temp[M][N];
+        char out[M][N];
+
+        /* Fill the block */
+        for (int m = 0; m < M; m++) {
+            for (int n = 0; n < N; n++) {
+                block[m][n] = input[i + m * N + n];
+            }
+        }
+
+        /*Inverse permute columns*/
+        for (int m1 = 0; m1 < M; m1++) {
+            for (int n1 = 0; n1 < N; n1++) {
+                temp[m1][K2_inv[n1]] = block[m1][n1];
+            }
+        }
+
+        /*Inverse permute rows*/
+        for (int n2 = 0; n2 < N; n2++) {
+            for (int m2 = 0; m2 < M; m2++) {
+                out[K1_inv[m2]][n2] = temp[m2][n2];
+            }
+        }
+
+
+        /*Write output*/
+        for(int m = 0; m < M; m++) {
+            for (int n = 0; n < N; n++) {
+                output[i + m * N + n] = out[m][n];
+            }
+        }
+
+    }
+
+    output[length] = '\0';
+
+    free(K1);
+    free(K2);
+    free(K1_inv);
+    free(K2_inv);
+
+}
 
 
 

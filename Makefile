@@ -9,6 +9,7 @@ TARGET_C = ej2_a
 TARGET_D = kasiski
 TARGET_E = IC
 TARGET_F = flujo
+TARGET_G = permutacion
 
 # Fuentes
 SRC_A = afin.c utils.c lfsr.c
@@ -17,9 +18,10 @@ SRC_C = vigenere.c utils.c lfsr.c
 SRC_D = kasiski.c utils.c lfsr.c
 SRC_E = IC.c utils.c lfsr.c
 SRC_F = flujo.c utils.c lfsr.c
+SRC_G = permutacion.c utils.c lfsr.c
 
 # Regla principal
-all: $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) $(TARGET_F)
+all: $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) $(TARGET_F) $(TARGET_G)
 
 # Compilar ej1_a
 $(TARGET_A): $(SRC_A)
@@ -45,6 +47,10 @@ $(TARGET_E): $(SRC_E)
 $(TARGET_F): $(SRC_F)
 	$(CC) $(CFLAGS) $(SRC_F) -o $(TARGET_F) $(LIBS)
 
+# Compilar permutacion
+$(TARGET_G): $(SRC_G)
+	$(CC) $(CFLAGS) $(SRC_G) -o $(TARGET_G) $(LIBS)
+
 # Limpiar
 clean:
-	rm -f $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) ${TARGET_F} *.o
+	rm -f $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) ${TARGET_F} ${TARGET_G} *.o

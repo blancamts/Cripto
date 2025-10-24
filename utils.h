@@ -30,5 +30,9 @@ int shrinking_bit(LFSR *r1, LFSR *r2);
 void stream_cipher(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2);
 void stream_cipher_mod(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2, int mod);
 void stream_decipher_mod(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2, int mod);
+int parse_permutation(const char *str, int *vec);
+void permutation_cipher(const char *input, char *output, const char *K1_str, const char *K2_str);
+void inverse_permutation(int *K, int *inv, int size);
+void permutation_decipher(const char *input, char *output, const char *K1_str, const char *K2_str);
 
 #endif /*UTILS_H*/
