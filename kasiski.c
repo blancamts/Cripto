@@ -16,11 +16,11 @@ int main(int argc, char *argv[]) {
     int ngram = 3;              
     char *input_filename = NULL; 
     char *output_filename = NULL;
-    FILE *input_file, *output_file;
+    FILE *output_file;
 
-    while ((opt = getopt(argc, argv, "l:i:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "n:i:o:")) != -1) {
         switch (opt) {
-            case 'l':
+            case 'n':
                 ngram = atoi(optarg);
                 break;
             case 'i':
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
                 output_filename = optarg;
                 break;
             default:
-                fprintf(stderr, "Usage: %s [-l ngram_length] [-i infile] [-o outfile]\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-n ngram_length] [-i infile] [-o outfile]\n", argv[0]);
                 return EXIT_FAILURE;
         }
     }
@@ -41,39 +41,65 @@ int main(int argc, char *argv[]) {
     }
 
 
+    /*Open the input file for reading*/
+    char *buffer = NULL;
+    size_t bytes_read = 0;
+
     if (input_filename == NULL) {
-        input_file = stdin;
+        /* Leer desde stdin */
+        size_t capacity = 1024;
+        buffer = malloc(capacity);
+        if (!buffer) {
+            perror("malloc");
+            return EXIT_FAILURE;
+        }
+    
+        int c;
+        while ((c = fgetc(stdin)) != EOF) {
+            if (bytes_read + 1 >= capacity) {
+                capacity *= 2;
+                buffer = realloc(buffer, capacity);
+                if (!buffer) {
+                    perror("realloc");
+                    return EXIT_FAILURE;
+                }
+            }
+            buffer[bytes_read++] = (char)c;
+        }
+        buffer[bytes_read] = '\0';
     } else {
-        input_file = fopen(input_filename, "r");
+        /* Leer desde archivo */
+        FILE *input_file = fopen(input_filename, "rb");
         if (input_file == NULL) {
             perror("Error opening input file");
             return EXIT_FAILURE;
         }
-    }
 
-    fseek(input_file, 0, SEEK_END);
-    long f_size = ftell(input_file);
-    rewind(input_file);
-    char *buffer = malloc(f_size + 1);
-    if (!buffer) {
+        fseek(input_file, 0, SEEK_END);
+        long bytes_read = ftell(input_file);
+        rewind(input_file);
+
+        char *buffer = malloc(bytes_read + 1);
+        if (!buffer) {
+            perror("malloc");
+            fclose(input_file);
+            return EXIT_FAILURE;
+        }
+
+        if (fread(buffer, 1, bytes_read, input_file) != bytes_read) {
+            perror("Error reading file");
+            fclose(input_file);
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+        buffer[bytes_read] = '\0';
+        
         fclose(input_file);
-        fprintf(stderr, "Error: cannot allocate %ld bytes.\n", f_size);
-        return EXIT_FAILURE;
     }
-
-    size_t bytes_read = fread(buffer, 1, f_size, input_file);
-    buffer[bytes_read] = '\0';
-    fclose(input_file);
 
     char *text = malloc(bytes_read + 1);
-    if (!text) {
-        free(buffer);
-        fprintf(stderr, "Error: cannot allocate %zd bytes.\n", bytes_read + 1);
-        return EXIT_FAILURE;
-    }
-
-    /* Normalize input to uppercase A-Z */
-    normalize_AZ(buffer, bytes_read, text);
+    int purged = normalize_AZ(buffer, bytes_read, text);
+    bytes_read = bytes_read - purged;
 
     /* Open output file */
     if (output_filename == NULL) {

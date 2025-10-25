@@ -5,14 +5,12 @@
 #include <bits/getopt_core.h>
 #include "utils.h"
 
-
-
 int main(int argc, char *argv[]) {
     int opt;
     int cipher = -1; /* 1 for cipher, 0 for decipher, -1 for unset (error) */
     char *input_filename = NULL;
     char *output_filename = NULL;
-    FILE *input_file, *output_file;
+    FILE *output_file;
     char *K1_str = NULL, *K2_str = NULL;
 
     
@@ -52,42 +50,65 @@ int main(int argc, char *argv[]) {
 
 
     /*Open the input file for reading*/
+/*Open the input file for reading*/
+    char *buffer = NULL;
+    size_t bytes_read = 0;
 
-    if (input_filename == NULL){
-        input_file = stdin;
-    }else{
-        input_file = fopen(input_filename, "r");
+    if (input_filename == NULL) {
+        /* Leer desde stdin */
+        size_t capacity = 1024;
+        buffer = malloc(capacity);
+        if (!buffer) {
+            perror("malloc");
+            return EXIT_FAILURE;
+        }
+    
+        int c;
+        while ((c = fgetc(stdin)) != EOF) {
+            if (bytes_read + 1 >= capacity) {
+                capacity *= 2;
+                buffer = realloc(buffer, capacity);
+                if (!buffer) {
+                    perror("realloc");
+                    return EXIT_FAILURE;
+                }
+            }
+            buffer[bytes_read++] = (char)c;
+        }
+        buffer[bytes_read] = '\0';
+    } else {
+        /* Leer desde archivo */
+        FILE *input_file = fopen(input_filename, "rb");
         if (input_file == NULL) {
             perror("Error opening input file");
             return EXIT_FAILURE;
         }
-    }
 
-    fseek(input_file, 0, SEEK_END);
-    long bytes_read = ftell(input_file);
-    rewind(input_file);
+        fseek(input_file, 0, SEEK_END);
+        long bytes_read = ftell(input_file);
+        rewind(input_file);
 
-    char *buffer = malloc(bytes_read + 1);
-    if (!buffer) {
-        perror("malloc");
+        char *buffer = malloc(bytes_read + 1);
+        if (!buffer) {
+            perror("malloc");
+            fclose(input_file);
+            return EXIT_FAILURE;
+        }
+
+        if (fread(buffer, 1, bytes_read, input_file) != bytes_read) {
+            perror("Error reading file");
+            fclose(input_file);
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+        buffer[bytes_read] = '\0';
+        
         fclose(input_file);
-        return EXIT_FAILURE;
     }
-
-    if (fread(buffer, 1, bytes_read, input_file) != bytes_read) {
-        perror("Error reading file");
-        fclose(input_file);
-        free(buffer);
-        return EXIT_FAILURE;
-    }
-    buffer[bytes_read] = '\0';
-    
-    fclose(input_file);
-
 
     char *text = malloc(bytes_read + 1);
     int purged = normalize_AZ(buffer, bytes_read, text);
-    bytes_read -= purged;
+    bytes_read = bytes_read - purged;
 
     char *buffer2 = malloc(strlen(text) + 16);
 

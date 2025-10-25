@@ -609,18 +609,33 @@ void stream_decipher_mod(const char *input, char *output, size_t length, uint32_
     output[length] = '\0';
 }
 
-void find_probable_key(const char *buffer, size_t length, int n, char *probable_key) {
+
+void find_probable_key(const char *buffer, size_t length, int n, char *probable_key, int language) {
     char **cols;
     int i, j;
     int freq[n][26];
     int col_len[n];
 
     const double P_english[26] = {
-    0.0804, 0.0154, 0.0306, 0.0399, 0.1251, 0.0230, 0.0196, 0.0549,
-    0.0726, 0.0016, 0.0067, 0.0414, 0.0253, 0.0709, 0.0760, 0.0200,
-    0.0011, 0.0612, 0.0654, 0.0925, 0.0271, 0.0099, 0.0192, 0.0019,
-    0.0173, 0.0019
+        0.0804, 0.0154, 0.0306, 0.0399, 0.1251, 0.0230, 0.0196, 0.0549,
+        0.0726, 0.0016, 0.0067, 0.0414, 0.0253, 0.0709, 0.0760, 0.0200,
+        0.0011, 0.0612, 0.0654, 0.0925, 0.0271, 0.0099, 0.0192, 0.0019,
+        0.0173, 0.0019
     };
+
+    const double P_spanish[26] = {
+        0.1196, 0.0092, 0.0292, 0.0687, 0.1678, 0.0052, 0.0073, 0.0089,
+        0.0415, 0.0030, 0.0000, 0.0837, 0.0212, 0.0701, 0.0869, 0.0277,
+        0.0153, 0.0494, 0.0788, 0.0331, 0.0480, 0.0039, 0.0000, 0.0006,
+        0.0154, 0.0015
+    };
+
+    const double *P;   // puntero al conjunto de probabilidades elegido
+    if (language == 1){
+        P = P_spanish;
+    }else{
+        P = P_english;
+    }
 
     cols = malloc(n * sizeof(char *));
     for (i = 0; i < n; i++) {
@@ -657,7 +672,7 @@ void find_probable_key(const char *buffer, size_t length, int n, char *probable_
             double M = 0.0;
             for (int j = 0; j < 26; j++) {
                 int shifted = (j + k) % 26;
-                M += P_english[j] * ((double)freq[i][shifted] / len);
+                M += P[j] * ((double)freq[i][shifted] / len);
             }
             if (M > best_M) {
                 best_M = M;
@@ -668,8 +683,12 @@ void find_probable_key(const char *buffer, size_t length, int n, char *probable_
         probable_key[i] = 'A' + best_k;
     }
 
+    probable_key[n] = '\0';
 
-    
+    for (i = 0; i < n; i++) {
+        free(cols[i]);
+    }
+    free(cols);
 }
 
 int parse_permutation(const char *str, int *vec) {

@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     char *output_filename = NULL;
     int mod_raw = -1; /* -1 for unset (error) */
     int *a_raw = NULL, *b_raw = NULL; /* coefficients for affine cipher, NULL for unset (error) */
-    FILE *input_file, *output_file;
+    FILE *output_file;
     int n = -1; /* dimension of the matrix, -1 for unset (error) */
     int padding = 0;
     char *original_buffer;
@@ -123,49 +123,86 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    if (input_filename == NULL){
-        input_file = stdin;
-    }else{
-        input_file = fopen(input_filename, "r");
+    /*Open the input file for reading*/
+    char *buffer = NULL;
+    size_t bytes_read = 0;
+
+    if (input_filename == NULL) {
+        /* Leer desde stdin */
+        size_t capacity = 1024;
+        buffer = malloc(capacity);
+        if (!buffer) {
+            perror("malloc");
+            return EXIT_FAILURE;
+        }
+    
+        int c;
+        while ((c = fgetc(stdin)) != EOF) {
+            if (bytes_read + 1 >= capacity) {
+                capacity *= 2;
+                buffer = realloc(buffer, capacity);
+                if (!buffer) {
+                    perror("realloc");
+                    return EXIT_FAILURE;
+                }
+            }
+            buffer[bytes_read++] = (char)c;
+        }
+        buffer[bytes_read] = '\0';
+    } else {
+        /* Leer desde archivo */
+        FILE *input_file = fopen(input_filename, "rb");
         if (input_file == NULL) {
             perror("Error opening input file");
             return EXIT_FAILURE;
         }
-    }
 
-    char *buffer = NULL;
-    size_t size = 0;
+        fseek(input_file, 0, SEEK_END);
+        long bytes_read = ftell(input_file);
+        rewind(input_file);
 
-    /*Read the entire file into memory*/
-    ssize_t bytes_read = getline(&buffer, &size, input_file);
-    if (bytes_read == -1) {
-        perror("Error reading file");
+        char *buffer = malloc(bytes_read + 1);
+        if (!buffer) {
+            perror("malloc");
+            fclose(input_file);
+            return EXIT_FAILURE;
+        }
+
+        if (fread(buffer, 1, bytes_read, input_file) != bytes_read) {
+            perror("Error reading file");
+            fclose(input_file);
+            free(buffer);
+            return EXIT_FAILURE;
+        }
+        buffer[bytes_read] = '\0';
+        
         fclose(input_file);
-        return EXIT_FAILURE;
     }
-    
-    fclose(input_file);
 
-    original_buffer = buffer; /* Keep pointer to free later */
+    char *text = malloc(bytes_read + 1);
+    int purged = normalize_AZ(buffer, bytes_read, text);
+    bytes_read = bytes_read - purged;
+
+    original_buffer = text; /* Keep pointer to free later */
     if (!cipher){
         /*Deciphering, read padding from header*/
-        padding = buffer[bytes_read - 1] - 'A';
-        buffer[bytes_read - 1] = '\0';
+        padding = text[bytes_read - 1] - 'A';
+        text[bytes_read - 1] = '\0';
         bytes_read--;
     }else if (cipher) {
         padding = (n - (bytes_read % n)) % n;
         /*Pad the buffer to be a multiple of n*/
         if (bytes_read % n != 0) {
             size_t new_size = bytes_read + padding;
-            buffer = realloc(buffer, new_size + 1);
-            if (buffer == NULL) {
+            text = realloc(text, new_size + 1);
+            if (text == NULL) {
                 perror("Error reallocating memory");
                 return EXIT_FAILURE;
             }
             char padding_char = 'A' + (padding);
-            memset(buffer + bytes_read, padding_char, padding);
+            memset(text + bytes_read, padding_char, padding);
             bytes_read = new_size;
-            buffer[bytes_read] = '\0';
+            text[bytes_read] = '\0';
         }
     }
 
@@ -173,11 +210,11 @@ int main(int argc, char *argv[]) {
 
     if (cipher) {
         /*Cipher*/
-        affine_cipher_hill(buffer, buffer2, bytes_read, matrix, vector, n, mod);
+        affine_cipher_hill(text, buffer2, bytes_read, matrix, vector, n, mod);
 
         size_t len = strlen(buffer2);
         buffer2 = realloc(buffer2, len + 2); /* +1 para header, +1 para '\0' */
-        if (!buffer) {
+        if (!buffer2) {
             perror("Error reallocating memory for output buffer");
             return 1;
         }
@@ -187,7 +224,7 @@ int main(int argc, char *argv[]) {
         bytes_read = len + 1;
     }else{
         /*Decipher*/
-        affine_decipher_hill(buffer, buffer2, bytes_read, matrix, vector, n, mod);
+        affine_decipher_hill(text, buffer2, bytes_read, matrix, vector, n, mod);
         bytes_read -= padding;
     }
 

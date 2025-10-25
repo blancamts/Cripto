@@ -12,19 +12,18 @@
 
 int main(int argc, char *argv[]) {
     int opt;
-    int l = -1; /* Key size */
+    int n = -1; /* Key size */
     char *input_filename = NULL;
     char *output_filename = NULL;
-    FILE *input_file = NULL;
     FILE *output_file = NULL;  
 
     int i;
 
     /* Parse command line arguments */
-    while ((opt = getopt(argc, argv, "l:i:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "n:i:o:")) != -1) {
         switch (opt) {
-            case 'l':
-                l = atoi(optarg);
+            case 'n':
+                n = atoi(optarg);
                 break;
             case 'i':
                 input_filename = optarg;
@@ -33,49 +32,81 @@ int main(int argc, char *argv[]) {
                 output_filename = optarg;
                 break; 
             default:
-                fprintf(stderr, "Usage: %s -C|-D -m mod -a a -b b -i inputfile -o outputfile\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-n n] [-i infile] [-o outfile]\n", argv[0]);
                 return EXIT_FAILURE;
         }
     }
 
-    /* Open input file */
-    if (input_filename == NULL){
-        input_file = stdin;
-    }else{
-        input_file = fopen(input_filename, "r");
+    /*Open the input file for reading*/
+    char *temp = NULL;
+    size_t bytes_read = 0;
+
+    if (input_filename == NULL) {
+        /* Leer desde stdin */
+        size_t capacity = 1024;
+        temp = malloc(capacity);
+        if (!temp) {
+            perror("malloc");
+            return EXIT_FAILURE;
+        }
+    
+        int c;
+        while ((c = fgetc(stdin)) != EOF) {
+            if (bytes_read + 1 >= capacity) {
+                capacity *= 2;
+                temp = realloc(temp, capacity);
+                if (!temp) {
+                    perror("realloc");
+                    return EXIT_FAILURE;
+                }
+            }
+            temp[bytes_read++] = (char)c;
+        }
+        temp[bytes_read] = '\0';
+    } else {
+        /* Leer desde archivo */
+        FILE *input_file = fopen(input_filename, "rb");
         if (input_file == NULL) {
             perror("Error opening input file");
             return EXIT_FAILURE;
         }
-    }
 
-    char *temp = NULL;
-    
-    size_t size = 0;
+        fseek(input_file, 0, SEEK_END);
+        long bytes_read = ftell(input_file);
+        rewind(input_file);
 
-    /*Read the entire file into memory*/
-    ssize_t bytes_read = getline(&temp, &size, input_file);
-    if (bytes_read == -1) {
-        perror("Error reading file");
+        char *temp = malloc(bytes_read + 1);
+        if (!temp) {
+            perror("malloc");
+            fclose(input_file);
+            return EXIT_FAILURE;
+        }
+
+        if (fread(temp, 1, bytes_read, input_file) != bytes_read) {
+            perror("Error reading file");
+            fclose(input_file);
+            free(temp);
+            return EXIT_FAILURE;
+        }
+        temp[bytes_read] = '\0';
+        
         fclose(input_file);
-        return EXIT_FAILURE;
     }
 
+    /* Normalize input to A-Z */
     char *buffer = malloc(bytes_read);
 
     int purged = normalize_AZ(temp, bytes_read, buffer);
     bytes_read = bytes_read - purged;
 
-    if (l <= 0){
-        l = bytes_read; /*Default try all n possible*/
+    if (n <= 0){
+        n = bytes_read; /*Default try all n possible*/
     }
-
-    fclose(input_file);
 
     double best_ic = 0.0;
     int best_ic_idx = 0;
 
-    for (i = 1; i < l; i++){
+    for (i = 1; i < n; i++){
         double ic = calculate_ic(buffer, bytes_read, i);
         printf("IC for n = %d: %f\n", i, ic);
 
@@ -84,8 +115,6 @@ int main(int argc, char *argv[]) {
             best_ic_idx = i;
         }
     }
-
-    printf("Best IC found for n = %d: %f\n", best_ic_idx, best_ic);
 
     /*Open the output file for writing*/
     if (output_filename == NULL){

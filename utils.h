@@ -25,6 +25,7 @@ void vigenere_cipher(const char *input, char *output, size_t length, const char 
 void vigenere_decipher(const char *input, char *output, size_t length, const char *key);
 int normalize_AZ(char *buffer, size_t length, char *text);
 double calculate_ic(const char *buffer, size_t length, int n);
+void find_probable_key(const char *buffer, size_t length, int n, char *probable_key, int language);
 int gcd_aux(int a, int b);
 int shrinking_bit(LFSR *r1, LFSR *r2);
 void stream_cipher(const char *input, char *output, size_t length, uint32_t seed1, uint32_t seed2);

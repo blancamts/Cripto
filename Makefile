@@ -10,6 +10,7 @@ TARGET_D = kasiski
 TARGET_E = IC
 TARGET_F = flujo
 TARGET_G = permutacion
+TARGET_H = subkeys
 
 # Fuentes
 SRC_A = afin.c utils.c lfsr.c
@@ -19,9 +20,10 @@ SRC_D = kasiski.c utils.c lfsr.c
 SRC_E = IC.c utils.c lfsr.c
 SRC_F = flujo.c utils.c lfsr.c
 SRC_G = permutacion.c utils.c lfsr.c
+SRC_H = subkeys.c utils.c lfsr.c
 
 # Regla principal
-all: $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) $(TARGET_F) $(TARGET_G)
+all: $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) $(TARGET_F) $(TARGET_G) $(TARGET_H)
 
 # Compilar ej1_a
 $(TARGET_A): $(SRC_A)
@@ -51,6 +53,10 @@ $(TARGET_F): $(SRC_F)
 $(TARGET_G): $(SRC_G)
 	$(CC) $(CFLAGS) $(SRC_G) -o $(TARGET_G) $(LIBS)
 
+# Compilar subkeys
+subkeys: $(SRC_H)
+	$(CC) $(CFLAGS) $(SRC_H) -o $(TARGET_H) $(LIBS)
+
 # Limpiar
 clean:
-	rm -f $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) ${TARGET_F} ${TARGET_G} *.o
+	rm -f $(TARGET_A) $(TARGET_B) $(TARGET_C) $(TARGET_D) $(TARGET_E) ${TARGET_F} ${TARGET_G} ${TARGET_H} *.o
