@@ -85,10 +85,10 @@ int main(int argc, char *argv[]) {
         }
 
         fseek(input_file, 0, SEEK_END);
-        long bytes_read = ftell(input_file);
+        bytes_read = ftell(input_file);
         rewind(input_file);
 
-        char *buffer = malloc(bytes_read + 1);
+        buffer = malloc(bytes_read + 1);
         if (!buffer) {
             perror("malloc");
             fclose(input_file);
@@ -110,7 +110,10 @@ int main(int argc, char *argv[]) {
     int purged = normalize_AZ(buffer, bytes_read, text);
     bytes_read = bytes_read - purged;
 
-    char *buffer2 = malloc(strlen(text) + 16);
+    int M = parse_values(K1_str, NULL);
+    int N = parse_values(K2_str, NULL);
+    
+    char *buffer2 = malloc(strlen(text) + M*N);
 
     /*Choose to cipher or decipher based on user input*/
     if (cipher == 1) {
@@ -137,6 +140,8 @@ int main(int argc, char *argv[]) {
         if (output_file == NULL) {
             perror("Error opening output file");
             free(buffer);
+            free(buffer2);
+            free(text);
             return EXIT_FAILURE;
         }
     }
@@ -146,7 +151,7 @@ int main(int argc, char *argv[]) {
     fclose(output_file);
     free(buffer);
     free(buffer2);
-
+    free(text);
 
     return 0;
 }

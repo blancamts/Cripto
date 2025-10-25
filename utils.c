@@ -684,14 +684,14 @@ int parse_values(const char *str, int *vec) {
 void permutation_cipher(const char *input, char *output, const char *K1_str, const char *K2_str) {
 
     int *K1, *K2;
-    K1 = malloc(100 * sizeof(int));
-    K2 = malloc(100 * sizeof(int));
-    char *padded_text = malloc(strlen(input) + 16);
-
+    K1 = malloc(strlen(K1_str) * sizeof(int));
+    K2 = malloc(strlen(K2_str) * sizeof(int));
 
     int i, pad = 0;
     int M = parse_values(K1_str, K1);
     int N = parse_values(K2_str, K2);
+
+    char *padded_text = malloc(strlen(input) + M*N);
 
     int block_size = M * N;
     int length = strlen(input);
