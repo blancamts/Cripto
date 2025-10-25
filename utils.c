@@ -164,30 +164,6 @@ void determinant(mpz_t **matrix, int n, mpz_t det_out) {
         mpz_set(det_out, det);
         return;
     }
-    if (n == 3) {
-        mpz_t term1, term2, term3, term4, term5, term6;
-        mpz_inits(term1, term2, term3, term4, term5, term6, NULL);
-        mpz_mul(term1, matrix[0][0], matrix[1][1]);
-        mpz_mul(term1, term1, matrix[2][2]);
-        mpz_mul(term2, matrix[0][1], matrix[1][2]);
-        mpz_mul(term2, term2, matrix[2][0]);
-        mpz_mul(term3, matrix[0][2], matrix[1][0]);
-        mpz_mul(term3, term3, matrix[2][1]);
-        mpz_mul(term4, matrix[0][2], matrix[1][1]);
-        mpz_mul(term4, term4, matrix[2][0]);
-        mpz_mul(term5, matrix[0][0], matrix[1][2]);
-        mpz_mul(term5, term5, matrix[2][1]);
-        mpz_mul(term6, matrix[0][1], matrix[1][0]);
-        mpz_mul(term6, term6, matrix[2][2]);
-        mpz_add(det, term1, term2);
-        mpz_add(det, det, term3);
-        mpz_sub(det, det, term4);
-        mpz_sub(det, det, term5);
-        mpz_sub(det, det, term6);
-        mpz_clears(term1, term2, term3, term4, term5, term6, NULL);
-        mpz_set(det_out, det);
-        return;
-    }
     return;
 }
 
@@ -304,10 +280,6 @@ void inverse_matrix(mpz_t **matrix, mpz_t **inv_matrix, int n, mpz_t mod) {
         mpz_clear(temp);
     }
 
-    else if (n == 3) {
-        /*Not implemented*/
-        return;
-    }
 
 }
 
@@ -691,7 +663,7 @@ void find_probable_key(const char *buffer, size_t length, int n, char *probable_
     free(cols);
 }
 
-int parse_permutation(const char *str, int *vec) {
+int parse_values(const char *str, int *vec) {
 
     char *str_copy = strdup(str);
     if (!str_copy) return -1;
@@ -718,8 +690,8 @@ void permutation_cipher(const char *input, char *output, const char *K1_str, con
 
 
     int i, pad = 0;
-    int M = parse_permutation(K1_str, K1);
-    int N = parse_permutation(K2_str, K2);
+    int M = parse_values(K1_str, K1);
+    int N = parse_values(K2_str, K2);
 
     int block_size = M * N;
     int length = strlen(input);
@@ -805,8 +777,8 @@ void permutation_decipher(const char *input, char *output, const char *K1_str, c
 
     int i;
 
-    int M = parse_permutation(K1_str, K1);
-    int N = parse_permutation(K2_str, K2);
+    int M = parse_values(K1_str, K1);
+    int N = parse_values(K2_str, K2);
 
     int *K1_inv = malloc(M * sizeof(int));
     int *K2_inv = malloc(N * sizeof(int));

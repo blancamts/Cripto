@@ -38,10 +38,6 @@ int main(int argc, char *argv[]) {
 
             case 'n':
                 n = atoi(optarg);
-                if (n <= 1 || n > 3) {
-                    fprintf(stderr, "Error: Dimension n must be a positive integer between 2 and 3\n");
-                    return EXIT_FAILURE;
-                }
                 break;
 
             case 'a':
@@ -76,11 +72,21 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    if (n <= 1) {
+        fprintf(stderr, "Error: Dimension n must be greater than 1.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n != 2) {
+        fprintf(stderr, "Error: Block size n= %d is not supported yet.\n", n);
+        return EXIT_FAILURE;
+    }
+
     int *a = malloc(n * n * sizeof(int));
     int *b = malloc(n * sizeof(int));
 
-    int parsed_a = parse_permutation(a_str, a);
-    int parsed_b = parse_permutation(b_str, b);
+    int parsed_a = parse_values(a_str, a);
+    int parsed_b = parse_values(b_str, b);
 
     if (parsed_a != n * n) {
         fprintf(stderr, "Error: Coefficient a must have %d elements.\n", n * n);
