@@ -11,11 +11,10 @@ int main(int argc, char *argv[]) {
     char *input_filename = NULL;
     char *output_filename = NULL;
     int mod_raw = -1; /* -1 for unset (error) */
-    int *a_raw = NULL, *b_raw = NULL; /* coefficients for affine cipher, NULL for unset (error) */
+    char *a_str = NULL, *b_str = NULL; /* coefficients for affine cipher, NULL for unset (error) */
     FILE *output_file;
     int n = -1; /* dimension of the matrix, -1 for unset (error) */
     int padding = 0;
-    char *original_buffer;
 
     int i, j;
 
@@ -43,34 +42,14 @@ int main(int argc, char *argv[]) {
                     fprintf(stderr, "Error: Dimension n must be a positive integer between 2 and 3\n");
                     return EXIT_FAILURE;
                 }
-                a_raw = malloc(n * n * sizeof(int));
-                b_raw = malloc(n * sizeof(int));
-                if (!a_raw || !b_raw) {
-                    fprintf(stderr, "Error: Memory allocation failed\n");
-                    return EXIT_FAILURE;
-                }
                 break;
 
             case 'a':
-                for (i=0; i<n*n; i++) {
-                    if (optind - 1 + i >= argc) {
-                        fprintf(stderr, "Error: Not enough values for matrix 'a'\n");
-                        return EXIT_FAILURE;
-                    }
-                    a_raw[i] = atoi(argv[optind - 1 + i]);
-                }
-                optind += n * n - 1;
+                a_str = optarg;
                 break;
 
             case 'b':
-                for (i = 0; i < n; i++) {
-                    if (optind - 1 + i >= argc) {
-                        fprintf(stderr, "Error: Not enough values for vector 'b'\n");
-                        return EXIT_FAILURE;
-                    }
-                    b_raw[i] = atoi(argv[optind - 1 + i]);
-                }
-                optind += n - 1;
+                b_str = optarg;
                 break;
             
             case 'i':
@@ -88,12 +67,28 @@ int main(int argc, char *argv[]) {
     }
 
     /* Validate required arguments */
-    if (cipher == -1 || mod_raw == -1 || a_raw == NULL || b_raw == NULL || n == -1) {
+    if (cipher == -1 || mod_raw == -1 || a_str == NULL || b_str == NULL || n == -1) {
         fprintf(stderr, "Error: Missing or invalid arguments.\n");
         fprintf(stderr, "Usage: %s -C|-D -n n -m mod -a a -b b -i inputfile -o outputfile\n", argv[0]);
         return EXIT_FAILURE;
     }if (mod_raw <= 0) {
         fprintf(stderr, "Error: Mod must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    int *a = malloc(n * n * sizeof(int));
+    int *b = malloc(n * sizeof(int));
+
+    int parsed_a = parse_permutation(a_str, a);
+    int parsed_b = parse_permutation(b_str, b);
+
+    if (parsed_a != n * n) {
+        fprintf(stderr, "Error: Coefficient a must have %d elements.\n", n * n);
+        return EXIT_FAILURE;
+    }
+
+    if (parsed_b != n) {
+        fprintf(stderr, "Error: Coefficient b must have %d elements.\n", n);
         return EXIT_FAILURE;
     }
 
@@ -106,14 +101,12 @@ int main(int argc, char *argv[]) {
     for (i = 0; i < n; i++) {
         matrix[i] = malloc(n * sizeof(mpz_t));
         for (j = 0; j < n; j++){
-            mpz_init(matrix[i][j]);
-            mpz_init_set_si(matrix[i][j], a_raw[i * n + j]);
+            mpz_init_set_si(matrix[i][j], a[i * n + j]);
         }
     }
 
     for (i = 0; i < n; i++) {
-        mpz_init(vector[i]);
-        mpz_init_set_si(vector[i], b_raw[i]);
+        mpz_init_set_si(vector[i], b[i]);
     }
     
     determinant(matrix, n, A);
@@ -124,18 +117,13 @@ int main(int argc, char *argv[]) {
     }
 
     /*Open the input file for reading*/
-    char *buffer = NULL;
     size_t bytes_read = 0;
+    char * buffer = NULL; 
 
     if (input_filename == NULL) {
         /* Leer desde stdin */
         size_t capacity = 1024;
         buffer = malloc(capacity);
-        if (!buffer) {
-            perror("malloc");
-            return EXIT_FAILURE;
-        }
-    
         int c;
         while ((c = fgetc(stdin)) != EOF) {
             if (bytes_read + 1 >= capacity) {
@@ -158,16 +146,10 @@ int main(int argc, char *argv[]) {
         }
 
         fseek(input_file, 0, SEEK_END);
-        long bytes_read = ftell(input_file);
+        bytes_read = ftell(input_file);
         rewind(input_file);
 
-        char *buffer = malloc(bytes_read + 1);
-        if (!buffer) {
-            perror("malloc");
-            fclose(input_file);
-            return EXIT_FAILURE;
-        }
-
+        buffer = malloc(bytes_read + 1);
         if (fread(buffer, 1, bytes_read, input_file) != bytes_read) {
             perror("Error reading file");
             fclose(input_file);
@@ -183,7 +165,6 @@ int main(int argc, char *argv[]) {
     int purged = normalize_AZ(buffer, bytes_read, text);
     bytes_read = bytes_read - purged;
 
-    original_buffer = text; /* Keep pointer to free later */
     if (!cipher){
         /*Deciphering, read padding from header*/
         padding = text[bytes_read - 1] - 'A';
@@ -242,7 +223,6 @@ int main(int argc, char *argv[]) {
     fwrite(buffer2, sizeof(char), bytes_read, output_file);
     
     fclose(output_file);
-    free(original_buffer);
     free(buffer2);
 
     /*free mpz*/
@@ -256,9 +236,11 @@ int main(int argc, char *argv[]) {
     free(matrix);
     free(vector);
     mpz_clear(mod);
-    free(a_raw);
-    free(b_raw);
+    free(a);
+    free(b);
     mpz_clear(A);
+    free(buffer);
+    free(text);
 
     return EXIT_SUCCESS;
 }
