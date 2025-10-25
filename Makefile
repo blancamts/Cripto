@@ -3,9 +3,9 @@ CFLAGS = -Wall -g
 LIBS = -lgmp
 
 # Ejecutables
-TARGET_A = ej1_a
-TARGET_B = ej1_b
-TARGET_C = ej2_a
+TARGET_A = afin
+TARGET_B = afin_hill
+TARGET_C = vigenere
 TARGET_D = kasiski
 TARGET_E = IC
 TARGET_F = flujo

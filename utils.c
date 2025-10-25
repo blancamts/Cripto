@@ -454,7 +454,7 @@ double calculate_ic(const char *buffer, size_t length, int n) {
     int freq[n][26];
 
     cols = malloc(n * sizeof(char *));
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         cols[i] = malloc((((length + n - 1) / n ) + 1) * sizeof(char)); /* ceil(lentgh/n) */
     }
 
@@ -608,22 +608,69 @@ void stream_decipher_mod(const char *input, char *output, size_t length, uint32_
 
     output[length] = '\0';
 }
-/*
-void find_probable_key(const char *buffer, size_t length, int key_length, char *probable_key) {
+
+void find_probable_key(const char *buffer, size_t length, int n, char *probable_key) {
     char **cols;
-    int i, j, col_index;
-    double ic_total = 0.0;
+    int i, j;
     int freq[n][26];
+    int col_len[n];
+
+    const double P_english[26] = {
+    0.0804, 0.0154, 0.0306, 0.0399, 0.1251, 0.0230, 0.0196, 0.0549,
+    0.0726, 0.0016, 0.0067, 0.0414, 0.0253, 0.0709, 0.0760, 0.0200,
+    0.0011, 0.0612, 0.0654, 0.0925, 0.0271, 0.0099, 0.0192, 0.0019,
+    0.0173, 0.0019
+    };
 
     cols = malloc(n * sizeof(char *));
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         cols[i] = malloc((((length + n - 1) / n ) + 1) * sizeof(char)); // ceil(lentgh/n) 
     }
 
+    /*Initialize frequency array*/
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < 26; j++) {
+            freq[i][j] = 0;
+        }
+    }
+
+    /*Rearange text into columns and calculate frequencies*/
+    for (i = 0; i < n; i++)
+        col_len[i] = 0;
+
+    for (i = 0; i < length; i++) {
+        int col = i % n;
+        char c = buffer[i];
+        if (c >= 'A' && c <= 'Z') {
+            cols[col][col_len[col]] = c;
+            freq[col][c - 'A']++;
+            col_len[col]++;  // <-- cuenta real por columna
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        double best_M = 0.0;
+        int best_k = 0;
+        int len = col_len[i];
+
+        for (int k = 0; k < 26; k++) {
+            double M = 0.0;
+            for (int j = 0; j < 26; j++) {
+                int shifted = (j + k) % 26;
+                M += P_english[j] * ((double)freq[i][shifted] / len);
+            }
+            if (M > best_M) {
+                best_M = M;
+                best_k = k;
+            }
+        }
+
+        probable_key[i] = 'A' + best_k;
+    }
+
+
     
 }
-*/
-
 
 int parse_permutation(const char *str, int *vec) {
 
