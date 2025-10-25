@@ -1,0 +1,7 @@
+====== KASISKI TEST =====
+n-gram length: 3
+
+N-gram: CHR
+Occurrences (5): 0 165 235 275 285
+GCD of distances = 5 -> possible key length
+
