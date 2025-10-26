@@ -112,7 +112,6 @@ int main(int argc, char *argv[]) {
     /*Calculate probable key length*/
     for (i = 1; i < n; i++){
         double ic = calculate_ic(buffer, bytes_read, i);
-        printf("IC for n = %d: %f\n", i, ic);
 
         if (fabs(ic - IC_ENGLISH) < fabs(best_ic - IC_ENGLISH)){
             best_ic = ic;
