@@ -72,10 +72,10 @@ int main(int argc, char *argv[]) {
         }
 
         fseek(input_file, 0, SEEK_END);
-        long bytes_read = ftell(input_file);
+        bytes_read = ftell(input_file);
         rewind(input_file);
 
-        char *temp = malloc(bytes_read + 1);
+        temp = malloc(bytes_read + 1);
         if (!temp) {
             perror("malloc");
             fclose(input_file);
