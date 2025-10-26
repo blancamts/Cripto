@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 
 
     /* Parse command line arguments */
-    while ((opt = getopt(argc, argv, "CDi:o:1:2:m:")) != -1){
+    while ((opt = getopt(argc, argv, "CDi:o:c:d:m:")) != -1){
 
         switch (opt) {
             case 'C':
@@ -28,10 +28,10 @@ int main(int argc, char *argv[]) {
             case 'D':
                 cipher = 0;
                 break;
-            case '1':
+            case 'c':
                 seed1 = (uint32_t)atoi(optarg);
                 break;
-            case '2':
+            case 'd':
                 seed2 = (uint32_t)atoi(optarg);
                 break;
             case 'i':
@@ -44,14 +44,14 @@ int main(int argc, char *argv[]) {
                 m = atoi(optarg);
                 break;
             default:
-                fprintf(stderr, "Usage: %s -C|-D [-1 seed1] [-2 seed2] [-m mod] [-i infile] [-o outfile]\n", argv[0]);
+                fprintf(stderr, "Usage: %s -C|-D [-c Control seed] [-d Data seed] [-m mod] [-i infile] [-o outfile]\n", argv[0]);
                 return EXIT_FAILURE;
         }
     }
 
     if (cipher == -1) {
         fprintf(stderr, "Error: Missing or invalid arguments.\n");
-        fprintf(stderr, "Usage: %s -C|-D [-1 seed1] [-2 seed2] [-m mod] [-i infile] [-o outfile]\n", argv[0]);
+        fprintf(stderr, "Usage: %s -C|-D [-c Control seed] [-d Data seed] [-m mod] [-i infile]\n", argv[0]);
         return EXIT_FAILURE;
     }
 

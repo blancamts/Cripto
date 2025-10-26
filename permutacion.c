@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
     
     /* Parse command line arguments */
-    while ((opt = getopt(argc, argv, "CD1:2:i:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "CDr:c:i:o:")) != -1) {
         switch (opt) {
             case 'C':
                 cipher = 1;
@@ -23,10 +23,10 @@ int main(int argc, char *argv[]) {
             case 'D':
                 cipher = 0;
                 break;
-            case '1':
+            case 'r':
                 K1_str = optarg;
                 break;
-            case '2':
+            case 'c':
                 K2_str = optarg;
                 break;
             case 'i':
@@ -36,14 +36,14 @@ int main(int argc, char *argv[]) {
                 output_filename = optarg;
                 break;
             default:
-                fprintf(stderr, "Usage: %s -C|-D -1 K1 -2 K2 -i inputfile -o outputfile\n", argv[0]);
+                fprintf(stderr, "Usage: %s -C|-D -r K1 -c K2 -i inputfile -o outputfile\n", argv[0]);
                 return EXIT_FAILURE;
         }
     }
     /* Verify the correct arguments were passed in the execution */
     if (cipher == -1 || K1_str == NULL || K2_str == NULL) {
         fprintf(stderr, "Error: Missing or invalid arguments.\n");
-        fprintf(stderr, "Usage: %s -C|-D -1 K1 -2 K2 -i inputfile -o outputfile\n", argv[0]);
+        fprintf(stderr, "Usage: %s -C|-D -r K1 -c K2 -i inputfile -o outputfile\n", argv[0]);
         return EXIT_FAILURE;
     }
 
