@@ -698,7 +698,10 @@ void permutation_cipher(const char *input, char *output, const char *K1_str, con
 
     
     int res = length % block_size;
-    pad = block_size - res;
+    if(res == 0)
+        pad = 0;
+    else
+        pad = block_size - res;
 
     int padded_length = length + pad;
 
