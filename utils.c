@@ -602,7 +602,7 @@ void find_probable_key(const char *buffer, size_t length, int n, char *probable_
         0.0154, 0.0015
     };
 
-    const double *P;   // puntero al conjunto de probabilidades elegido
+    const double *P;
     if (language == 1){
         P = P_spanish;
     }else{
@@ -611,7 +611,7 @@ void find_probable_key(const char *buffer, size_t length, int n, char *probable_
 
     cols = malloc(n * sizeof(char *));
     for (i = 0; i < n; i++) {
-        cols[i] = malloc((((length + n - 1) / n ) + 1) * sizeof(char)); // ceil(lentgh/n) 
+        cols[i] = malloc((((length + n - 1) / n ) + 1) * sizeof(char)); /* ceil(lentgh/n) */ 
     }
 
     /*Initialize frequency array*/
@@ -631,7 +631,7 @@ void find_probable_key(const char *buffer, size_t length, int n, char *probable_
         if (c >= 'A' && c <= 'Z') {
             cols[col][col_len[col]] = c;
             freq[col][c - 'A']++;
-            col_len[col]++;  // <-- cuenta real por columna
+            col_len[col]++;
         }
     }
 
@@ -709,10 +709,8 @@ void permutation_cipher(const char *input, char *output, const char *K1_str, con
     for (int k = length; k < padded_length; k++)
         padded_text[k] = 'X';
 
-    /* Terminamos con fin de cadena */
     padded_text[padded_length] = '\0';
 
-    /* Actualizamos longitud total */
     length = padded_length;
 
 
@@ -771,8 +769,8 @@ void inverse_permutation(int *K, int *inv, int size) {
 void permutation_decipher(const char *input, char *output, const char *K1_str, const char *K2_str) {
 
     int *K1, *K2;
-    K1 = malloc(100 * sizeof(int));
-    K2 = malloc(100 * sizeof(int));
+    K1 = malloc(strlen(K1_str) * sizeof(int));
+    K2 = malloc(strlen(K2_str) * sizeof(int));
 
 
     int i;

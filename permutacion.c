@@ -110,8 +110,11 @@ int main(int argc, char *argv[]) {
     int purged = normalize_AZ(buffer, bytes_read, text);
     bytes_read = bytes_read - purged;
 
-    int M = parse_values(K1_str, NULL);
-    int N = parse_values(K2_str, NULL);
+    int * K1 = malloc(strlen(K1_str) * sizeof(int));
+    int * K2 = malloc(strlen(K2_str) * sizeof(int));
+
+    int M = parse_values(K1_str, K1);
+    int N = parse_values(K2_str, K2);
     
     char *buffer2 = malloc(strlen(text) + M*N);
 
