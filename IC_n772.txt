@@ -1,6 +1,0 @@
-====== INDEX OF COINCIDENCE TEST =====
-Best IC found for n = 772: 0.069175
-Diffetence to English IC: 0.004175
-
-Expected IC for random text: 0.038500
-Expected IC for English text: 0.065000

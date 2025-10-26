@@ -1,7 +1,0 @@
-====== KASISKI TEST =====
-n-gram length: 3
-
-N-gram: THN
-Occurrences (2): 0 26038
-GCD of distances = 26038 -> possible key length
-
