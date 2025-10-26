@@ -1,6 +1,1 @@
-====== INDEX OF COINCIDENCE TEST =====
-Best IC found for n = 6: 0.065187
-Diffetence to English IC: 0.000187
-
-Expected IC for random text: 0.038500
-Expected IC for English text: 0.065000
+Probable key (length 6): CATCAT

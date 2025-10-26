@@ -1,0 +1,6 @@
+====== INDEX OF COINCIDENCE TEST =====
+Best IC found for n = 5631: 0.064997
+Diffetence to English IC: 0.000003
+
+Expected IC for random text: 0.038500
+Expected IC for English text: 0.065000

@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
 
     for (i = 1; i < n; i++){
         double ic = calculate_ic(buffer, bytes_read, i);
+        
 
         if (fabs(ic - IC_ENGLISH) < fabs(best_ic - IC_ENGLISH)){
             best_ic = ic;
