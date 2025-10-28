@@ -8,7 +8,7 @@
 
 #define IC_RANDOM 0.0385
 #define IC_ENGLISH 0.0650
-
+#define IC_SPANISH 0.0770
 
 int main(int argc, char *argv[]) {
     int opt;
@@ -16,11 +16,12 @@ int main(int argc, char *argv[]) {
     char *input_filename = NULL;
     char *output_filename = NULL;
     FILE *output_file = NULL;  
+    int language = 0; /* 0 for English, 1 for Spanish (DEFAULT: ENGLISH)*/
 
     int i;
 
     /* Parse command line arguments */
-    while ((opt = getopt(argc, argv, "n:i:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "n:i:o:l:")) != -1) {
         switch (opt) {
             case 'n':
                 n = atoi(optarg);
@@ -31,8 +32,11 @@ int main(int argc, char *argv[]) {
             case 'o':   
                 output_filename = optarg;
                 break; 
+            case 'l':
+                language = atoi(optarg);
+                break;
             default:
-                fprintf(stderr, "Usage: %s [-n n] [-i infile] [-o outfile]\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-n n] [-l language (0 for english / 1 for spanish)] [-i infile] [-o outfile]\n", argv[0]);
                 return EXIT_FAILURE;
         }
     }
@@ -109,11 +113,18 @@ int main(int argc, char *argv[]) {
     for (i = 1; i < n; i++){
         double ic = calculate_ic(buffer, bytes_read, i);
         
-
-        if (fabs(ic - IC_ENGLISH) < fabs(best_ic - IC_ENGLISH)){
-            best_ic = ic;
-            best_ic_idx = i;
+        if (language == 1) { 
+            if (fabs(ic - IC_SPANISH) < fabs(best_ic - IC_SPANISH)){
+                best_ic = ic;
+                best_ic_idx = i;
+            }
+        } else {
+            if (fabs(ic - IC_ENGLISH) < fabs(best_ic - IC_ENGLISH)){
+                best_ic = ic;
+                best_ic_idx = i;
+            }
         }
+        
     }
 
     /*Open the output file for writing*/

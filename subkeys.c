@@ -8,6 +8,7 @@
 
 #define IC_RANDOM 0.0385
 #define IC_ENGLISH 0.0650
+#define IC_SPANISH 0.0770
 
 int main(int argc, char *argv[]) {
     int opt;
@@ -113,9 +114,16 @@ int main(int argc, char *argv[]) {
     for (i = 1; i < n; i++){
         double ic = calculate_ic(buffer, bytes_read, i);
 
-        if (fabs(ic - IC_ENGLISH) < fabs(best_ic - IC_ENGLISH)){
-            best_ic = ic;
-            best_ic_idx = i;
+        if (language == 1) { 
+            if (fabs(ic - IC_SPANISH) < fabs(best_ic - IC_SPANISH)){
+                best_ic = ic;
+                best_ic_idx = i;
+            }
+        } else{
+            if (fabs(ic - IC_ENGLISH) < fabs(best_ic - IC_ENGLISH)){
+                best_ic = ic;
+                best_ic_idx = i;
+            }
         }
     }
 
@@ -123,12 +131,17 @@ int main(int argc, char *argv[]) {
     char probable_key[best_ic_idx + 1];
     find_probable_key(buffer, bytes_read, best_ic_idx, probable_key, language);
 
-    /* Open output file */
-    output_file = fopen(output_filename, "wb");
-    if (!output_file) {
-       perror("Error opening output file");
-       fclose(output_file);
-       return EXIT_FAILURE;
+    /*Open the output file for writing*/
+    if (output_filename == NULL){
+        output_file = stdout;
+    }
+    else{
+        output_file = fopen(output_filename, "w");   
+        if (output_file == NULL) {
+            perror("Error opening output file");
+            free(buffer);
+            return EXIT_FAILURE;
+        }
     }
 
     /*Write probable key to output file*/
