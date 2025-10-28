@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 
     if (cipher == -1) {
         fprintf(stderr, "Error: Missing or invalid arguments.\n");
-        fprintf(stderr, "Usage: %s -C|-D [-c Control seed] [-d Data seed] [-m mod] [-i infile]\n", argv[0]);
+        fprintf(stderr, "Usage: %s -C|-D [-c Control seed] [-d Data seed] [-m mod] [-i infile] [-o outfile]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
